@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ceeride</string>
+    <string name="title_activity_main_maps">Map</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="source_text">Pick up location!</string>
+    <string name="destination_text">Destination!</string>
+    <string name="action_settings">Settings</string>
+</resources>
