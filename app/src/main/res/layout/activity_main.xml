@@ -1,27 +1,44 @@
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-
-    <fragment
-        android:id="@+id/pickup_fragment"
-        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+    <LinearLayout
+        android:id="@+id/text_box_container"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
 
-    <fragment
-        android:id="@+id/destination_fragment"
-        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        <fragment
+            android:id="@+id/pickup_fragment"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <fragment
+            android:id="@+id/destination_fragment"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/layout_map_container"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
 
+    </FrameLayout>
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/layout_map"
-        android:name="com.harora.ceeride.MapsFragment"/>
+        android:text="Find Rides"
+        android:id="@+id/find_rides_button"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal" />
 
-</LinearLayout>
+
+</RelativeLayout>

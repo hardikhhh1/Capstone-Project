@@ -26,6 +26,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 /**
@@ -80,7 +83,6 @@ public class MapsFragment extends Fragment {
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
                 mMap.setBuildingsEnabled(true);
-//                mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
                 setPresentLocationOnMap();
             }
@@ -106,21 +108,27 @@ public class MapsFragment extends Fragment {
         markAndZoomMap(lastKnownLocation);
     }
 
-    public void markAndZoomMap(LatLng latLng){
+    public void markAndZoomMap(LatLng latLng, int index){
         if(latLngMarkers == null){
             latLngMarkers = new ArrayList<>();
         }
-        latLngMarkers.add(latLng);
+        latLngMarkers.add(index, latLng);
         this.mMap.addMarker(new MarkerOptions().position(latLng));
-        CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
-        mMap.moveCamera(center);
-        mMap.animateCamera(zoom);
+
 
         if(latLngMarkers.size() > 1){
-            LatLngBounds bounds = new LatLngBounds(latLngMarkers.get(0), latLngMarkers.get(1));
-            CameraUpdate boundUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
-            mMap.moveCamera(boundUpdate);
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for(LatLng latLngMarker : latLngMarkers){
+                builder.include(latLngMarker);
+            }
+            LatLngBounds bounds = builder.build();
+            CameraUpdate boundUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 13);
+            mMap.animateCamera(boundUpdate);
+        } else{
+            CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
+            CameraUpdate zoom = CameraUpdateFactory.zoomTo(13);
+            mMap.moveCamera(center);
+            mMap.animateCamera(zoom);
         }
 
     }
@@ -131,14 +139,6 @@ public class MapsFragment extends Fragment {
         latitude = location.getLatitude();
 
         Log.d(LOG_TAG, "Got the location : Longitude : " + longitude + " Latitude : " + latitude);
-
-//        LatLng latLng = new LatLng(longitude, latitude);
-//        mMap.addMarker(new MarkerOptions().position(latLng)
-//                .title("Marker"));
-//        CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
-//        CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
-//        mMap.moveCamera(center);
-//        mMap.animateCamera(zoom);
 
     }
 
