@@ -1,20 +1,24 @@
 package com.harora.ceeride.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.location.places.Place;
 import com.harora.ceeride.R;
-import com.harora.ceeride.utils.dummy.DummyContent;
-import com.harora.ceeride.utils.dummy.DummyContent.DummyItem;
+import com.harora.ceeride.model.CeeridePlace;
+import com.harora.ceeride.model.RideDetail;
+
+import org.lucasr.twowayview.widget.DividerItemDecoration;
+import org.lucasr.twowayview.widget.TwoWayView;
+
+import java.util.ArrayList;
 
 
 /**
@@ -23,16 +27,17 @@ import com.harora.ceeride.utils.dummy.DummyContent.DummyItem;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class RideDetailFragment extends Fragment {
+public class RideDetailFragment extends Fragment implements AbstractRideUtil.Callback {
 
     // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    private static final String PICK_UP_LOCATION = "pick-up-location";
-    private static final String DROP_OFF_LOCATION = "drop-off-location";
+    public static final String ARG_COLUMN_COUNT = "column-count";
+    public static final String PICK_UP_LOCATION = "pick-up-location";
+    public static final String DROP_OFF_LOCATION = "drop-off-location";
     // TODO: Customize parameters
+
     private int mColumnCount = 4;
-    Place pickUpLocation;
-    Place dropOffLocation;
+    CeeridePlace pickUpLocation;
+    CeeridePlace dropOffLocation;
     private OnListFragmentInteractionListener mListener;
 
     /**
@@ -62,8 +67,8 @@ public class RideDetailFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-            pickUpLocation = (Place) getArguments().get(PICK_UP_LOCATION);
-            dropOffLocation = (Place) getArguments().get(DROP_OFF_LOCATION);
+            pickUpLocation = (CeeridePlace) getArguments().get(PICK_UP_LOCATION);
+            dropOffLocation = (CeeridePlace) getArguments().get(DROP_OFF_LOCATION);
         }
 
         if(pickUpLocation == null){
@@ -72,8 +77,8 @@ public class RideDetailFragment extends Fragment {
             showExceptionMessage("Please select drop off location");
         }
 
-
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,17 +87,28 @@ public class RideDetailFragment extends Fragment {
 
         // Set the adapter
         if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MyRideDetailRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            TwoWayView recyclerView = (TwoWayView) view;
+            recyclerView.setHasFixedSize(true);
+            final Drawable divider = getResources().getDrawable(R.drawable.divider);
+            recyclerView.addItemDecoration(new DividerItemDecoration(divider));
+
+
+            new UberRideUtil(pickUpLocation.getLatitude(),
+                    pickUpLocation.getLongitude(),
+                    dropOffLocation.getLatitude(),
+                    dropOffLocation.getLongitude(), this).execute();
         }
+
         return view;
     }
+
+    @Override
+    public void onRideDetails(ArrayList<RideDetail> rideDetails) {
+        TwoWayView recyclerView = (TwoWayView) getView();
+        recyclerView.setAdapter(new MyRideDetailRecyclerViewAdapter(rideDetails,
+                mListener));
+    }
+
 
 
     @Override
@@ -102,6 +118,17 @@ public class RideDetailFragment extends Fragment {
             mListener = (OnListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof OnListFragmentInteractionListener) {
+            mListener = (OnListFragmentInteractionListener) activity;
+        } else {
+            throw new RuntimeException(activity.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
     }
@@ -124,6 +151,6 @@ public class RideDetailFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(RideDetail rideDetail);
     }
 }

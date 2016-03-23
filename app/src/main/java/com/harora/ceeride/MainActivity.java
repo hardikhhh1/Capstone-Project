@@ -2,8 +2,12 @@ package com.harora.ceeride;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.DialogInterface;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,18 +20,16 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.harora.ceeride.utils.MyRideDetailRecyclerFragment;
-import com.harora.ceeride.utils.MyRideDetailRecyclerViewAdapter;
+import com.harora.ceeride.model.CeeridePlace;
+import com.harora.ceeride.model.RideDetail;
 import com.harora.ceeride.utils.RideDetailFragment;
-import com.harora.ceeride.utils.dummy.DummyContent;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemSelected;
 
 
-public class MainActivity extends ActionBarActivity implements
+public class MainActivity extends AppCompatActivity implements
     CeeRideActivity, RideDetailFragment.OnListFragmentInteractionListener{
 
     Place pickUpPlace;
@@ -63,13 +65,16 @@ public class MainActivity extends ActionBarActivity implements
         MapsFragment mapsFragment = new MapsFragment();
 
         getFragmentManager().beginTransaction()
-                .replace(R.id.layout_map_container, mapsFragment, LOG_TAG)
+                .add(R.id.layout_map_container, mapsFragment, LOG_TAG)
                 .commit();
+    }
 
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
         holder = new MainActivityHolder(this);
         holder.pickUpLocation.setOnPlaceSelectedListener(new CeeridePlaceSelectionListener(this, 0));
         holder.destinationLocation.setOnPlaceSelectedListener(new CeeridePlaceSelectionListener(this, 1));
-
     }
 
     @Override
@@ -96,8 +101,31 @@ public class MainActivity extends ActionBarActivity implements
 
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
-        Log.d(LOG_TAG, "Interaction with the content.");
+    public void onListFragmentInteraction(RideDetail rideDetail) {
+        Log.d(LOG_TAG, "Interaction with the content: Ride clicked : " + rideDetail.getRideName());
+
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append("Do you want to call ")
+                .append(rideDetail.getRideName())
+                .append("?")
+                .append("\n")
+                .append("It will cost between " + rideDetail.getLowRideCost() + " - " +
+                        rideDetail.getHighRideCost());
+
+        new AlertDialog.Builder(this)
+                .setTitle("Ceeride Confirmation")
+                .setMessage(messageBuilder.toString())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Toast.makeText(MainActivity.this,
+                                "Calling your ride.",
+                                Toast.LENGTH_SHORT).show();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+
+        // TODO : Open the appropriate application with
+        // the ride details.
     }
 
     class MainActivityHolder{
@@ -137,7 +165,19 @@ public class MainActivity extends ActionBarActivity implements
             RideDetailFragment rideDetailFragment =
                     new RideDetailFragment();
 
+            Bundle bundle = new Bundle();
 
+            // TODO : Remove this , just for testing easily
+            CeeridePlace tempPickUpPlace = new CeeridePlace(42.345183500000005,
+                    -71.08505099999999, "48 Clearway St");
+            CeeridePlace tempDropOffPlace = new CeeridePlace(42.3713157,
+                    -71.0965647, "185 Elm St");
+            bundle.putParcelable(RideDetailFragment.PICK_UP_LOCATION,
+                    tempPickUpPlace);
+            bundle.putParcelable(RideDetailFragment.DROP_OFF_LOCATION,
+                    tempDropOffPlace);
+
+            rideDetailFragment.setArguments(bundle);
             getFragmentManager()
                     .beginTransaction()
                     .replace(R.id.layout_map_container, rideDetailFragment, "detailsFragment")

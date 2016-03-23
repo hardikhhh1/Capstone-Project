@@ -71,7 +71,6 @@ public class MapsFragment extends Fragment {
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
 
-
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
