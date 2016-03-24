@@ -1,28 +1,39 @@
 package com.harora.ceeride;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.harora.ceeride.model.CeeridePlace;
 import com.harora.ceeride.model.RideDetail;
 import com.harora.ceeride.utils.RideDetailFragment;
+import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
+import com.yalantis.contextmenu.lib.MenuObject;
+import com.yalantis.contextmenu.lib.MenuParams;
+import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,10 +41,54 @@ import butterknife.OnClick;
 
 
 public class MainActivity extends AppCompatActivity implements
-    CeeRideActivity, RideDetailFragment.OnListFragmentInteractionListener{
+        CeeRideActivity, RideDetailFragment.OnListFragmentInteractionListener,
+        OnMenuItemClickListener{
 
     Place pickUpPlace;
     Place dropOffPlace;
+    private FragmentManager fragmentManager;
+    private ContextMenuDialogFragment mMenuDialogFragment;
+    private ContextMenu mContextMenu;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        fragmentManager = getSupportFragmentManager();
+        MapsFragment mapsFragment = new MapsFragment();
+        mContextMenu = new ContextMenu(true, true);
+
+
+        initToolbar();
+        initMenuFragment();
+
+
+        fragmentManager.beginTransaction()
+                .add(R.id.layout_map_container, mapsFragment, LOG_TAG)
+                .commit();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.context_menu:
+                if (fragmentManager.findFragmentByTag(ContextMenuDialogFragment.TAG) == null) {
+                    mMenuDialogFragment.show(fragmentManager, ContextMenuDialogFragment.TAG);
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onPlaceSelected(Place place, int index) {
@@ -57,17 +112,35 @@ public class MainActivity extends AppCompatActivity implements
     MainActivityHolder holder;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        MapsFragment mapsFragment = new MapsFragment();
+    private void initMenuFragment() {
 
-        getFragmentManager().beginTransaction()
-                .add(R.id.layout_map_container, mapsFragment, LOG_TAG)
-                .commit();
+        MenuParams menuParams = new MenuParams();
+        menuParams.setActionBarSize((int) getResources().getDimension(R.dimen.tool_bar_height));
+        menuParams.setMenuObjects(mContextMenu.getMenuObjects());
+        menuParams.setClosableOutside(false);
+        mMenuDialogFragment = ContextMenuDialogFragment.newInstance(menuParams);
+        mMenuDialogFragment.setItemClickListener(this);
     }
+
+
+    @Override
+    public void onBackPressed() {
+        if (mMenuDialogFragment != null && mMenuDialogFragment.isAdded()) {
+            mMenuDialogFragment.dismiss();
+        } else{
+            finish();
+        }
+    }
+
+    @Override
+    public void onMenuItemClick(View clickedView, int position) {
+        if(mContextMenu.getMenuObject(position)
+                .getTitle().equals(ContextMenu.ADD_FAVORITES)){
+            Toast.makeText(this, "Add favourites was clicked", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -77,26 +150,21 @@ public class MainActivity extends AppCompatActivity implements
         holder.destinationLocation.setOnPlaceSelectedListener(new CeeridePlaceSelectionListener(this, 1));
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-       getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    private void initToolbar() {
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        mToolbar.setNavigationIcon(R.drawable.btn_back);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
 
@@ -133,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements
         PlaceAutocompleteFragment pickUpLocation;
         PlaceAutocompleteFragment destinationLocation;
         MapsFragment mapsFragment;
+
         @Bind(R.id.find_rides_button) Button mFindRidesButton;
 
         AutocompleteFilter typeFilter;
@@ -143,10 +212,11 @@ public class MainActivity extends AppCompatActivity implements
             typeFilter = new AutocompleteFilter.Builder()
                     .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
                     .build();
-            mapsFragment = (MapsFragment) getFragmentManager().findFragmentByTag(LOG_TAG);
+            mapsFragment = (MapsFragment) getSupportFragmentManager().findFragmentByTag(LOG_TAG);
             ButterKnife.bind(this, activity);
 
         }
+
 
         @OnClick(R.id.find_rides_button)
         public void onFindRidesButton(){
@@ -164,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements
             // We can initiate another fragment.
             RideDetailFragment rideDetailFragment =
                     new RideDetailFragment();
-
             Bundle bundle = new Bundle();
 
             // TODO : Remove this , just for testing easily
@@ -178,12 +247,16 @@ public class MainActivity extends AppCompatActivity implements
                     tempDropOffPlace);
 
             rideDetailFragment.setArguments(bundle);
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.layout_map_container, rideDetailFragment, "detailsFragment")
+            Fragment previousFragment = fragmentManager.findFragmentByTag("detailsFragment");
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            if(previousFragment != null){
+                transaction.remove(previousFragment);
+            }
+            transaction.add(R.id.layout_map_container, rideDetailFragment, "detailsFragment")
                     .commit();
 
         }
+
 
 
         private PlaceAutocompleteFragment getFragment(int id){

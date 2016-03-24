@@ -6,5 +6,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:twowayview_layoutManager="ListLayoutManager"
-    android:background="@android:color/transparent"
-    android:alpha="100"/>
+    android:background="@android:color/black"
+    android:alpha=".8"/>

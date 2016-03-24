@@ -43,4 +43,8 @@ dependencies {
 
     compile 'org.lucasr.twowayview:core:1.0.0-SNAPSHOT@aar'
     compile 'org.lucasr.twowayview:layouts:1.0.0-SNAPSHOT@aar'
+
+    // For context menu
+    compile 'com.yalantis:contextmenu:1.0.6'
+
 }

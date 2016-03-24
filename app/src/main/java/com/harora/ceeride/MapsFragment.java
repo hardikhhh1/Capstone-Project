@@ -1,7 +1,6 @@
 package com.harora.ceeride;
 
-import android.app.Fragment;
-import android.location.Criteria;
+import android.support.v4.app.Fragment;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -11,25 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.fitness.data.MapValue;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-
 
 /**
  * A placeholder fragment containing a simple view.
@@ -121,8 +112,10 @@ public class MapsFragment extends Fragment {
                 builder.include(latLngMarker);
             }
             LatLngBounds bounds = builder.build();
-            CameraUpdate boundUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 13);
-            mMap.animateCamera(boundUpdate);
+            CameraUpdate boundUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+            CameraUpdate zoomUpdate = CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 13);
+            mMap.moveCamera(boundUpdate);
+            mMap.animateCamera(zoomUpdate);
         } else{
             CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(13);

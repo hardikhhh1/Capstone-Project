@@ -1,5 +1,7 @@
 package com.harora.ceeride.utils;
 
+import android.support.v4.app.Fragment;
+
 import com.harora.ceeride.model.RideDetail;
 import com.harora.ceeride.model.UberRideDetail;
 import com.victorsima.uber.UberClient;
@@ -7,13 +9,6 @@ import com.victorsima.uber.UberService;
 import com.victorsima.uber.model.Price;
 import com.victorsima.uber.model.Prices;
 import com.victorsima.uber.model.Times;
-import com.victorsima.uber.model.sandbox.SandboxService;
-
-import android.app.Fragment;
-import android.support.annotation.FloatRange;
-import android.support.v7.appcompat.R;
-
-import java.sql.Time;
 import java.util.ArrayList;
 
 import retrofit.RestAdapter;
