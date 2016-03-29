@@ -1,7 +1,9 @@
 package com.harora.ceeride.contextmenu;
 
 import android.content.Context;
+import android.widget.Toast;
 
+import com.harora.ceeride.MainMapActivity;
 import com.harora.ceeride.R;
 import com.harora.ceeride.db.CeerideFavoriteDbUtils;
 import com.harora.ceeride.model.CeerideFavorite;
@@ -41,10 +43,14 @@ public class ContextMenu {
             ceerideMenuItems.add(new CeerideMenuItem(favMenuObject){
                 @Override
                 public void onClick(Context context) {
-                    CeeridePlace tempDropOffPlace = new CeeridePlace(42.3713157,
-                            -71.0965647, "189 Elm St");
-                    CeerideFavoriteDbUtils.save(mContext, new CeerideFavorite(
-                            tempDropOffPlace, "SAMPLE"));
+                    if(context instanceof MainMapActivity){
+                        CeeridePlace dropOffPlace =
+                                ((MainMapActivity) context).getDropOffPlace();
+                        CeerideFavoriteDbUtils.save(mContext, new CeerideFavorite(
+                                dropOffPlace, "SAMPLE"));
+                    } else {
+                        Toast.makeText(context, "Cannot add to favorites.").show();
+                    }
                 }
             });
         }

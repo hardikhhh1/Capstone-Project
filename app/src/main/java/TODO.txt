@@ -3,29 +3,28 @@ Ceeride:
 [√]- Map should open with the user present location
 [√]   - Gps button should be present on the map
 [√]   - And the src location should be filled.
+[√]- Show find rides button only when both names are filled
+[√]- When details are shown , hide find rides.
+[√]- Name should cover full text box.
+[√]- Get rides according to the settings:
+[√]  - Implement another util class
+[√] - Destination address should be added as favorite if needed.
+[√]- Comment out walkable distance
 
 [] - When a name is cleared at any point.
 []    - Move the place auto complete fragment to another fragment
         and have a clear button there to clear it.
 []    - Reach back to the main fragment and show a toast message.
 
-[√]- Show find rides button only when both names are filled
-[√]- When details are shown , hide find rides.
-[√]- Name should cover full text box.
 
-[√]- Get rides according to the settings:
-[√]  - Implement another util class
-
-[]- Destination address should be added as favorite if needed.
 []- Add table which has all the places visited information.
 []- Screen rotation should not destroy any page.
 []- Back button should work , and not close the application.
 []- Make ride detail in recycler view have better look
-[]- Comment out walkable distance
+
 []- Implement Lyft api
 []- Add widget.
 
-
 [] - Materialize the ui
 [] - App should open when clicked on detail
-
+[] - Add mechanism to delete favourites.

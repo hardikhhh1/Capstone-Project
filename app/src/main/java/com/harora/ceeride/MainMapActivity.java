@@ -46,6 +46,21 @@ public class MainMapActivity extends AppCompatActivity implements
     private ContextMenuDialogFragment mMenuDialogFragment;
     private ContextMenu mContextMenu;
 
+    public CeeridePlace getPickUpPlace() {
+        return pickUpPlace;
+    }
+
+    public void setPickUpPlace(CeeridePlace pickUpPlace) {
+        this.pickUpPlace = pickUpPlace;
+    }
+
+    public CeeridePlace getDropOffPlace() {
+        return dropOffPlace;
+    }
+
+    public void setDropOffPlace(CeeridePlace dropOffPlace) {
+        this.dropOffPlace = dropOffPlace;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
