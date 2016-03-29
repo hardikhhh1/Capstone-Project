@@ -54,8 +54,6 @@ public class MainMapActivity extends AppCompatActivity implements
         fragmentManager = getSupportFragmentManager();
         MapsFragment mapsFragment = new MapsFragment();
         mContextMenu = new ContextMenu(this, true, true);
-
-
         initToolbar();
         initMenuFragment();
 
@@ -102,10 +100,17 @@ public class MainMapActivity extends AppCompatActivity implements
 
         if (index == 0) {
             onSourceChanged(place);
-
         } else {
+            // TODO : Implement onDestination changed.
             dropOffPlace = place;
             holder.destinationLocation.setText(place.getPlaceName());
+        }
+
+        if(pickUpPlace != null && !pickUpPlace.getPlaceName().isEmpty()
+                && dropOffPlace != null && !dropOffPlace.getPlaceName().isEmpty()){
+            holder.mFindRidesButton.setVisibility(View.VISIBLE);
+        } else{
+            holder.mFindRidesButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -123,8 +128,6 @@ public class MainMapActivity extends AppCompatActivity implements
     private final String LOG_TAG = MainMapActivity.class.getSimpleName();
 
     MainActivityHolder holder;
-
-
 
     private void initMenuFragment() {
 
@@ -225,6 +228,7 @@ public class MainMapActivity extends AppCompatActivity implements
             mapsFragment = (MapsFragment) getSupportFragmentManager().findFragmentByTag(LOG_TAG);
             ButterKnife.bind(this, activity);
 
+            mFindRidesButton.setVisibility(View.INVISIBLE);
         }
 
 
@@ -239,6 +243,9 @@ public class MainMapActivity extends AppCompatActivity implements
 //                showExceptionMessage("Please select drop off location");
 //                return;
 //            }
+
+            // TODO : SHow a loader
+            holder.mFindRidesButton.setVisibility(View.INVISIBLE);
 
             // We have both pick up and drop off location.
             // We can initiate another fragment.
