@@ -15,18 +15,22 @@ import java.util.Set;
  */
 public class CeeridePreferences {
 
-    private static final List<String> rides = Arrays.asList("Uber", "Lyft");
-
-//    public static float getMaximumWalkableDistance(Context context){
-//        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(Context);
-//        float walkableDistance = SP.getFloat("walkable_distance", 0);
-//        return walkableDistance;
-//    }
-
+    public static final String UBER_RIDE = "Uber";
+    public static final String LYFT_RIDE = "Lyft";
+    public static final String UBER_RIDE_PREFERENCE = "uber_ride_preference";
+    public static final String LYFT_RIDE_PREFERENCE = "lyft_ride_preference";
 
     public static Set<String> getRides(Context context){
+        List<String> rides = new ArrayList<>();
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(context);
-        return SP.getStringSet("ride", new HashSet<>(rides));
+        if(SP.getBoolean(UBER_RIDE_PREFERENCE, true)){
+            rides.add(UBER_RIDE);
+        }
+        // TODO : add lyft
+//        if(SP.getBoolean(LYFT_RIDE_PREFERENCE, true)){
+//            rides.add(LYFT_RIDE);
+//        }
+        return new HashSet<>(rides);
     }
 
 }

@@ -15,8 +15,7 @@ public class CeeridePreferenceFragment extends PreferenceFragmentCompat{
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
-        addPreferencesFromResource(R.xml.preference);
-
+        addPreferencesFromResource(R.xml.preferences);
     }
 
     @Override

@@ -274,8 +274,6 @@ public class MainMapActivity extends AppCompatActivity implements
 
         }
 
-
-
         private PlaceAutocompleteFragment getFragment(int id){
             PlaceAutocompleteFragment fragment = (PlaceAutocompleteFragment)getFragmentManager()
                     .findFragmentById(id);

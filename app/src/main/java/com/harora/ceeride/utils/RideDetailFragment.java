@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.harora.ceeride.R;
 import com.harora.ceeride.model.CeeridePlace;
 import com.harora.ceeride.model.RideDetail;
+import com.harora.ceeride.model.UberRideDetail;
 
 import org.lucasr.twowayview.widget.DividerItemDecoration;
 import org.lucasr.twowayview.widget.TwoWayView;
@@ -92,18 +93,7 @@ public class RideDetailFragment extends Fragment implements AbstractRideUtil.Cal
             recyclerView.setHasFixedSize(true);
             final Drawable divider = getResources().getDrawable(R.drawable.divider);
             recyclerView.addItemDecoration(new DividerItemDecoration(divider));
-
-            Set<String> rides = CeeridePreferences.getRides(getContext());
-
-            if(rides.size() == 0){
-              showExceptionMessage("You don't have any rides services selected.");
-            } else if(rides.contains("Uber")){
-                new UberRideUtil(pickUpLocation.getLatitude(),
-                        pickUpLocation.getLongitude(),
-                        dropOffLocation.getLatitude(),
-                        dropOffLocation.getLongitude(), this).execute();
-            }
-
+            new CeerideRideUtil(this, pickUpLocation, dropOffLocation).getRideDetails();
         }
 
         return view;
