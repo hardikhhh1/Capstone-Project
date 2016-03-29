@@ -1,4 +1,4 @@
-package com.harora.ceeride;
+package com.harora.ceeride.activity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -26,6 +26,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.harora.ceeride.R;
 import com.harora.ceeride.model.CeeridePlace;
 
 import java.io.IOException;

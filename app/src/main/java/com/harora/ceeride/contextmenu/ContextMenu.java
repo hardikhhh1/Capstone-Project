@@ -3,16 +3,14 @@ package com.harora.ceeride.contextmenu;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.harora.ceeride.MainMapActivity;
+import com.harora.ceeride.activity.MainMapActivity;
 import com.harora.ceeride.R;
 import com.harora.ceeride.db.CeerideFavoriteDbUtils;
 import com.harora.ceeride.model.CeerideFavorite;
 import com.harora.ceeride.model.CeeridePlace;
 import com.yalantis.contextmenu.lib.MenuObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,7 +47,8 @@ public class ContextMenu {
                         CeerideFavoriteDbUtils.save(mContext, new CeerideFavorite(
                                 dropOffPlace, "SAMPLE"));
                     } else {
-                        Toast.makeText(context, "Cannot add to favorites.").show();
+                        Toast.makeText(context, "Cannot add to favorites.",
+                                Toast.LENGTH_SHORT).show();
                     }
                 }
             });

@@ -5,12 +5,13 @@ import android.util.Log;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.harora.ceeride.activity.CeeRideMapActivity;
 import com.harora.ceeride.model.CeeridePlace;
 
 /**
  * Created by harora on 3/16/16.
  */
-class CeeridePlaceSelectionListener implements PlaceSelectionListener{
+public class CeeridePlaceSelectionListener implements PlaceSelectionListener{
 
     private final String LOG_TAG = CeeridePlaceSelectionListener.class.getSimpleName();
 

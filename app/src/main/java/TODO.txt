@@ -10,6 +10,7 @@ Ceeride:
 [√]  - Implement another util class
 [√] - Destination address should be added as favorite if needed.
 [√]- Comment out walkable distance
+[√]- Back button should work , and not close the application.
 
 [] - When a name is cleared at any point.
 []    - Move the place auto complete fragment to another fragment
@@ -19,7 +20,6 @@ Ceeride:
 
 []- Add table which has all the places visited information.
 []- Screen rotation should not destroy any page.
-[]- Back button should work , and not close the application.
 []- Make ride detail in recycler view have better look
 
 []- Implement Lyft api

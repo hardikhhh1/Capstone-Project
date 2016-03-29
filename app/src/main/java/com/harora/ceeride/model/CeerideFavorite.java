@@ -2,7 +2,7 @@ package com.harora.ceeride.model;
 
 import android.content.Context;
 
-import com.harora.ceeride.CeeRideMapActivity;
+import com.harora.ceeride.activity.CeeRideMapActivity;
 import com.harora.ceeride.contextmenu.CeerideMenuItem;
 import com.yalantis.contextmenu.lib.MenuObject;
 

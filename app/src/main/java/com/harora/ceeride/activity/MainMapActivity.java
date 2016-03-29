@@ -1,4 +1,4 @@
-package com.harora.ceeride;
+package com.harora.ceeride.activity;
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;
@@ -21,7 +21,11 @@ import android.widget.Toast;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.harora.ceeride.CeeridePlaceSelectionListener;
+import com.harora.ceeride.R;
 import com.harora.ceeride.contextmenu.ContextMenu;
+import com.harora.ceeride.exceptions.CeerideException;
+import com.harora.ceeride.exceptions.LocationEmptyException;
 import com.harora.ceeride.model.CeeridePlace;
 import com.harora.ceeride.model.RideDetail;
 import com.harora.ceeride.utils.CeeridePreferenceFragment;
@@ -40,11 +44,27 @@ public class MainMapActivity extends AppCompatActivity implements
         OnMenuItemClickListener{
 
 
-    CeeridePlace pickUpPlace;
-    CeeridePlace dropOffPlace;
+    private CeeridePlace pickUpPlace;
+    private CeeridePlace dropOffPlace;
     private FragmentManager fragmentManager;
     private ContextMenuDialogFragment mMenuDialogFragment;
     private ContextMenu mContextMenu;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        fragmentManager = getSupportFragmentManager();
+        MapsFragment mapsFragment = new MapsFragment();
+        mContextMenu = new ContextMenu(this, true, true);
+        initToolbar();
+        initMenuFragment();
+        fragmentManager.beginTransaction()
+                .add(R.id.layout_map_container, mapsFragment, LOG_TAG)
+                .addToBackStack(MapsFragment.class.getName())
+                .commit();
+    }
 
     public CeeridePlace getPickUpPlace() {
         return pickUpPlace;
@@ -62,21 +82,7 @@ public class MainMapActivity extends AppCompatActivity implements
         this.dropOffPlace = dropOffPlace;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        fragmentManager = getSupportFragmentManager();
-        MapsFragment mapsFragment = new MapsFragment();
-        mContextMenu = new ContextMenu(this, true, true);
-        initToolbar();
-        initMenuFragment();
 
-
-        fragmentManager.beginTransaction()
-                .add(R.id.layout_map_container, mapsFragment, LOG_TAG)
-                .commit();
-    }
 
 
     @Override
@@ -99,7 +105,8 @@ public class MainMapActivity extends AppCompatActivity implements
             case R.id.settings:
                 CeeridePreferenceFragment fragment = new CeeridePreferenceFragment();
                 fragmentManager.beginTransaction()
-                        .replace(android.R.id.content,fragment, "settings")
+                        .add(android.R.id.content,fragment, "settings")
+                        .addToBackStack("settings")
                         .commit();
 
         }
@@ -135,17 +142,11 @@ public class MainMapActivity extends AppCompatActivity implements
         holder.pickUpLocation.setText(place.getPlaceName());
     }
 
-    public void showExceptionMessage(String message){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT)
-                .show();
-    }
-
     private final String LOG_TAG = MainMapActivity.class.getSimpleName();
 
     MainActivityHolder holder;
 
     private void initMenuFragment() {
-
         MenuParams menuParams = new MenuParams();
         menuParams.setActionBarSize((int) getResources().getDimension(R.dimen.tool_bar_height));
         menuParams.setMenuObjects(mContextMenu.getMenuObjects());
@@ -160,7 +161,12 @@ public class MainMapActivity extends AppCompatActivity implements
         if (mMenuDialogFragment != null && mMenuDialogFragment.isAdded()) {
             mMenuDialogFragment.dismiss();
         } else{
-            finish();
+            int count = fragmentManager.getBackStackEntryCount();
+            if (count > 0 ){
+                fragmentManager.popBackStack();
+            } else {
+                finish();
+            }
         }
     }
 
@@ -196,6 +202,8 @@ public class MainMapActivity extends AppCompatActivity implements
     }
 
 
+
+
     @Override
     public void onListFragmentInteraction(RideDetail rideDetail) {
         Log.d(LOG_TAG, "Interaction with the content: Ride clicked : " + rideDetail.getRideName());
@@ -220,8 +228,7 @@ public class MainMapActivity extends AppCompatActivity implements
                     }})
                 .setNegativeButton(android.R.string.no, null).show();
 
-        // TODO : Open the appropriate application with
-        // the ride details.
+        // TODO : Open the appropriate application with the ride details.
     }
 
     class MainActivityHolder{
@@ -229,6 +236,8 @@ public class MainMapActivity extends AppCompatActivity implements
         PlaceAutocompleteFragment pickUpLocation;
         PlaceAutocompleteFragment destinationLocation;
         MapsFragment mapsFragment;
+        Activity mActivity;
+        Bundle mBundle;
 
         @Bind(R.id.find_rides_button) Button mFindRidesButton;
 
@@ -241,6 +250,7 @@ public class MainMapActivity extends AppCompatActivity implements
                     .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
                     .build();
             mapsFragment = (MapsFragment) getSupportFragmentManager().findFragmentByTag(LOG_TAG);
+            mActivity  = activity;
             ButterKnife.bind(this, activity);
 
             mFindRidesButton.setVisibility(View.INVISIBLE);
@@ -251,42 +261,46 @@ public class MainMapActivity extends AppCompatActivity implements
         public void onFindRidesButton(){
             Log.d(LOG_TAG, "On find rides button clicked.");
 
-//            if(pickUpPlace == null){
-//                showExceptionMessage("Please select pick up location");
-//                return;
-//            } else if(dropOffPlace == null){
-//                showExceptionMessage("Please select drop off location");
-//                return;
-//            }
-
-            // TODO : SHow a loader
             holder.mFindRidesButton.setVisibility(View.INVISIBLE);
+            try {
+                setDetailsBundle();
+                openDetailsFragment();
+            } catch (CeerideException e){
+                Log.e(LOG_TAG, "Error occured : " + e.getMessage());
+            }
+        }
 
-            // We have both pick up and drop off location.
-            // We can initiate another fragment.
+        private void setDetailsBundle() throws LocationEmptyException{
+            if(pickUpPlace == null){
+                throw new LocationEmptyException(mActivity,
+                        "Pick up location is null",
+                        "Please fill the pick up address.");
+            } else if(dropOffPlace == null){
+                throw new LocationEmptyException(mActivity,
+                        "Destination location is null",
+                        "Please fill the destination address.");
+            }
+
+            mBundle = new Bundle();
+
+            mBundle.putParcelable(RideDetailFragment.PICK_UP_LOCATION,
+                    pickUpPlace);
+            mBundle.putParcelable(RideDetailFragment.DROP_OFF_LOCATION,
+                    dropOffPlace);
+        }
+
+        private void openDetailsFragment(){
             RideDetailFragment rideDetailFragment =
                     new RideDetailFragment();
-            Bundle bundle = new Bundle();
-
-            // TODO : Remove this , just for testing easily
-            CeeridePlace tempPickUpPlace = new CeeridePlace(42.345183500000005,
-                    -71.08505099999999, "48 Clearway St");
-            CeeridePlace tempDropOffPlace = new CeeridePlace(42.3713157,
-                    -71.0965647, "185 Elm St");
-            bundle.putParcelable(RideDetailFragment.PICK_UP_LOCATION,
-                    tempPickUpPlace);
-            bundle.putParcelable(RideDetailFragment.DROP_OFF_LOCATION,
-                    tempDropOffPlace);
-
-            rideDetailFragment.setArguments(bundle);
+            rideDetailFragment.setArguments(mBundle);
             Fragment previousFragment = fragmentManager.findFragmentByTag("detailsFragment");
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             if(previousFragment != null){
                 transaction.remove(previousFragment);
             }
             transaction.add(R.id.layout_map_container, rideDetailFragment, "detailsFragment")
+                    .addToBackStack("detailsFragment")
                     .commit();
-
         }
 
         private PlaceAutocompleteFragment getFragment(int id){

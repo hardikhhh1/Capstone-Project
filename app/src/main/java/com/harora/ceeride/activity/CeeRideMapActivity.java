@@ -1,4 +1,4 @@
-package com.harora.ceeride;
+package com.harora.ceeride.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
