@@ -2,11 +2,11 @@ package com.harora.ceeride;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -26,13 +26,19 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.harora.ceeride.model.CeeridePlace;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MapsFragment extends Fragment implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnMyLocationButtonClickListener{
 
     public static final String LOG_TAG = MapsFragment.class.getSimpleName();
 
@@ -43,26 +49,10 @@ public class MapsFragment extends Fragment implements
 
     private GoogleApiClient mGoogleApiClient;
 
-    private Double longitude;
-    private Double latitude;
-    private String locationProvider = LocationManager.GPS_PROVIDER;
-    private LocationManager locationManager ;
-
-
-    // Define a listener that responds to location updates
-    LocationListener locationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            markAndZoomMap(location);
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-        public void onProviderEnabled(String provider) {}
-
-        public void onProviderDisabled(String provider) {}
-    };
-
-
+//    private Double longitude;
+//    private Double latitude;
+//    private String locationProvider = LocationManager.GPS_PROVIDER;
+//    private LocationManager locationManager ;
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -77,17 +67,18 @@ public class MapsFragment extends Fragment implements
     @Override
     public void onConnected(Bundle connectionHint) {
         mGoogleApiClient.connect();
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-            Log.d(LOG_TAG, "Got the last location.");
 
-            markAndZoomMap(new LatLng(mLastLocation.getLatitude(),
-                    mLastLocation.getLongitude()), 0);
-        } else {
-            // Show rationale and request permission.
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnMyLocationButtonClickListener(this);
+        Location mLastLocation = getPresentLocation();
+        markAndZoomMap(new LatLng(mLastLocation.getLatitude(),
+                mLastLocation.getLongitude()), 0);
+
+        if(getContext() instanceof MainMapActivity && mLastLocation != null){
+            CeeridePlace presentLocation = getPresentPlace(mLastLocation);
+            if(presentLocation != null){
+                ((MainMapActivity) getContext()).onSourceChanged(presentLocation);
+            }
         }
     }
 
@@ -136,8 +127,6 @@ public class MapsFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        locationManager =
-                (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
     }
 
 
@@ -161,21 +150,58 @@ public class MapsFragment extends Fragment implements
             mMap.animateCamera(zoomUpdate);
         } else{
             CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
-            CameraUpdate zoom = CameraUpdateFactory.zoomTo(20);
+            CameraUpdate zoom = CameraUpdateFactory.zoomTo(18);
             mMap.moveCamera(center);
             mMap.animateCamera(zoom);
         }
 
     }
 
-    private void markAndZoomMap(Location location){
-        if(mMap == null || location == null ) return;
-        longitude = location.getLongitude();
-        latitude = location.getLatitude();
-
-        Log.d(LOG_TAG, "Got the location : Longitude : " + longitude + " Latitude : " + latitude);
-
+    private Location getPresentLocation(){
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            return mLastLocation;
+        } else {
+            // TODO: Show rationale and request permission.
+        }
+        return null;
     }
 
+    private CeeridePlace getPresentPlace(Location mLastLocation){
 
+            Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+            try {
+                List<Address> addresses = geocoder.getFromLocation(
+                        mLastLocation.getLatitude(),
+                        mLastLocation.getLongitude(),
+                        // In this sample, get just a single address.
+                        1);
+                if(addresses.size() > 0){
+                    String addressLine = addresses.get(0).getAddressLine(0);
+                    return new CeeridePlace(mLastLocation.getLatitude(),
+                            mLastLocation.getLongitude(),
+                            addressLine);
+                }
+            } catch (IOException e){
+                Log.e(LOG_TAG, "Error when getting location information");
+            }
+
+        return null;
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        if(getContext() instanceof MainMapActivity){
+            Location mLastLocation = getPresentLocation();
+            if(mLastLocation != null) {
+                CeeridePlace presentLocation = getPresentPlace(mLastLocation);
+                if (presentLocation != null) {
+                    ((MainMapActivity) getContext()).onSourceChanged(presentLocation);
+                }
+            }
+        }
+        return true;
+    }
 }

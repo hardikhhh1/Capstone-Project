@@ -1,6 +1,5 @@
 package com.harora.ceeride;
 
-import android.app.Activity;
 import android.util.Log;
 
 import com.google.android.gms.common.api.Status;
@@ -16,9 +15,9 @@ class CeeridePlaceSelectionListener implements PlaceSelectionListener{
     private final String LOG_TAG = CeeridePlaceSelectionListener.class.getSimpleName();
 
     int index;
-    CeeRideActivity activity;
+    CeeRideMapActivity activity;
 
-    public CeeridePlaceSelectionListener(CeeRideActivity activity, int index){
+    public CeeridePlaceSelectionListener(CeeRideMapActivity activity, int index){
         this.index = index;
         this.activity = activity;
     }

@@ -19,12 +19,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.harora.ceeride.contextmenu.ContextMenu;
-import com.harora.ceeride.db.CeerideFavoriteDbUtils;
-import com.harora.ceeride.model.CeerideFavorite;
 import com.harora.ceeride.model.CeeridePlace;
 import com.harora.ceeride.model.RideDetail;
 import com.harora.ceeride.utils.CeeridePreferenceFragment;
@@ -38,9 +35,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MainActivity extends AppCompatActivity implements
-        CeeRideActivity, RideDetailFragment.OnListFragmentInteractionListener,
+public class MainMapActivity extends AppCompatActivity implements
+        CeeRideMapActivity, RideDetailFragment.OnListFragmentInteractionListener,
         OnMenuItemClickListener{
+
 
     CeeridePlace pickUpPlace;
     CeeridePlace dropOffPlace;
@@ -103,12 +101,18 @@ public class MainActivity extends AppCompatActivity implements
                 index);
 
         if (index == 0) {
-            pickUpPlace = place;
-            holder.pickUpLocation.setText(place.getPlaceName());
+            onSourceChanged(place);
+
         } else {
             dropOffPlace = place;
             holder.destinationLocation.setText(place.getPlaceName());
         }
+    }
+
+    @Override
+    public void onSourceChanged(CeeridePlace place) {
+        pickUpPlace = place;
+        holder.pickUpLocation.setText(place.getPlaceName());
     }
 
     public void showExceptionMessage(String message){
@@ -116,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements
                 .show();
     }
 
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private final String LOG_TAG = MainMapActivity.class.getSimpleName();
 
     MainActivityHolder holder;
 
@@ -192,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        Toast.makeText(MainActivity.this,
+                        Toast.makeText(MainMapActivity.this,
                                 "Calling your ride.",
                                 Toast.LENGTH_SHORT).show();
                     }})

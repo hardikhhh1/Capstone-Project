@@ -14,8 +14,12 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.harora.ceeride.model.CeeridePlace;
 
 
-public  interface CeeRideActivity {
+public  interface CeeRideMapActivity {
 
     public void onPlaceSelected(CeeridePlace place, int index);
+
+    public void onSourceChanged(CeeridePlace place);
+
+//    public void onDestinationChanged(CeeridePlace place);
 
 }

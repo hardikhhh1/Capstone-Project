@@ -1,7 +1,7 @@
 Ceeride:
 [√]- Map should open with the user present location
 [√]   - Gps button should be present on the map
-[]    - And the src location should be filled.
+[√]   - And the src location should be filled.
 []- When a name is cleared at any point.
 []    - Reach back to the main fragment and show a toast message.
 []- Show find rides button only when both names are filled
