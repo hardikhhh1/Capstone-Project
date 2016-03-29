@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.harora.ceeride.MainActivity">
 
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_setting_light"
+        android:orderInCategory="1"
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/context_menu"

@@ -21,12 +21,12 @@ public class CeeridePlace implements Parcelable{
     }
 
     public CeeridePlace(Place place){
-        new CeeridePlace(place.getLatLng().latitude, place.getLatLng().longitude,
+        this(place.getLatLng().latitude, place.getLatLng().longitude,
                 place.getName().toString());
     }
 
     public CeeridePlace(Parcel input){
-        new CeeridePlace(input.readDouble(), input.readDouble(), input.readString());
+        this(input.readDouble(), input.readDouble(), input.readString());
     }
 
     public double getLatitude() {

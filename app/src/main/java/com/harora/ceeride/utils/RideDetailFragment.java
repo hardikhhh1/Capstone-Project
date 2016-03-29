@@ -19,6 +19,7 @@ import org.lucasr.twowayview.widget.DividerItemDecoration;
 import org.lucasr.twowayview.widget.TwoWayView;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 
 /**
@@ -92,10 +93,17 @@ public class RideDetailFragment extends Fragment implements AbstractRideUtil.Cal
             final Drawable divider = getResources().getDrawable(R.drawable.divider);
             recyclerView.addItemDecoration(new DividerItemDecoration(divider));
 
-            new UberRideUtil(pickUpLocation.getLatitude(),
-                    pickUpLocation.getLongitude(),
-                    dropOffLocation.getLatitude(),
-                    dropOffLocation.getLongitude(), this).execute();
+            Set<String> rides = CeeridePreferences.getRides(getContext());
+
+            if(rides.size() == 0){
+              showExceptionMessage("You don't have any rides services selected.");
+            } else if(rides.contains("Uber")){
+                new UberRideUtil(pickUpLocation.getLatitude(),
+                        pickUpLocation.getLongitude(),
+                        dropOffLocation.getLatitude(),
+                        dropOffLocation.getLongitude(), this).execute();
+            }
+
         }
 
         return view;

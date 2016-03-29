@@ -11,10 +11,11 @@ import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.harora.ceeride.model.CeeridePlace;
 
 
-interface CeeRideActivity {
+public  interface CeeRideActivity {
 
-    public void onPlaceSelected(Place place, int index);
+    public void onPlaceSelected(CeeridePlace place, int index);
 
 }

@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.harora.ceeride.model.CeeridePlace;
 
 /**
  * Created by harora on 3/16/16.
@@ -25,7 +26,8 @@ class CeeridePlaceSelectionListener implements PlaceSelectionListener{
     @Override
     public void onPlaceSelected(Place place) {
         Log.d(LOG_TAG, "Place selected : " + place.getName());
-        activity.onPlaceSelected(place, index);
+        CeeridePlace ceeridePlace = new CeeridePlace(place);
+        activity.onPlaceSelected(ceeridePlace, index);
     }
 
     @Override

@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
@@ -24,16 +21,17 @@ import android.widget.Toast;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.harora.ceeride.contextmenu.ContextMenu;
+import com.harora.ceeride.db.CeerideFavoriteDbUtils;
+import com.harora.ceeride.model.CeerideFavorite;
 import com.harora.ceeride.model.CeeridePlace;
 import com.harora.ceeride.model.RideDetail;
+import com.harora.ceeride.utils.CeeridePreferenceFragment;
 import com.harora.ceeride.utils.RideDetailFragment;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
-import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -44,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements
         CeeRideActivity, RideDetailFragment.OnListFragmentInteractionListener,
         OnMenuItemClickListener{
 
-    Place pickUpPlace;
-    Place dropOffPlace;
+    CeeridePlace pickUpPlace;
+    CeeridePlace dropOffPlace;
     private FragmentManager fragmentManager;
     private ContextMenuDialogFragment mMenuDialogFragment;
     private ContextMenu mContextMenu;
@@ -57,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
         MapsFragment mapsFragment = new MapsFragment();
-        mContextMenu = new ContextMenu(true, true);
+        mContextMenu = new ContextMenu(this, true, true);
 
 
         initToolbar();
@@ -86,19 +84,30 @@ public class MainActivity extends AppCompatActivity implements
                     mMenuDialogFragment.show(fragmentManager, ContextMenuDialogFragment.TAG);
                 }
                 break;
+
+            case R.id.settings:
+                CeeridePreferenceFragment fragment = new CeeridePreferenceFragment();
+                fragmentManager.beginTransaction()
+                        .replace(android.R.id.content,fragment, "settings")
+                        .commit();
+
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onPlaceSelected(Place place, int index) {
-        Log.d(LOG_TAG, "Place selected : " + place.getName());
-        holder.mapsFragment.markAndZoomMap(place.getLatLng(), index);
+    public void onPlaceSelected(CeeridePlace place, int index) {
+        Log.d(LOG_TAG, "Place selected : " + place.getPlaceName());
+
+        holder.mapsFragment.markAndZoomMap(new LatLng(place.getLatitude(), place.getLongitude()),
+                index);
 
         if (index == 0) {
             pickUpPlace = place;
+            holder.pickUpLocation.setText(place.getPlaceName());
         } else {
             dropOffPlace = place;
+            holder.destinationLocation.setText(place.getPlaceName());
         }
     }
 
@@ -135,10 +144,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onMenuItemClick(View clickedView, int position) {
-        if(mContextMenu.getMenuObject(position)
-                .getTitle().equals(ContextMenu.ADD_FAVORITES)){
-            Toast.makeText(this, "Add favourites was clicked", Toast.LENGTH_SHORT).show();
-        }
+        mContextMenu.getMenuObject(position).onClick(this);
     }
 
 
