@@ -1,38 +1,60 @@
 package com.harora.ceeride.model;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+
 /**
  * Created by harora on 3/22/16.
  */
 public abstract class RideDetail {
 
-    private int logoId;
     private String rideName;
     private String rideCost;
     private String lowRideCost;
     private String highRideCost;
-    private String surchargeValue;
+    private Float surchargeValue;
     private String timeEstimate;
+    private String currencyCode;
 
     public RideDetail() {
     }
 
-    public RideDetail(int logoId, String rideName, String rideCost, String lowRideCost,
-                      String highRideCost, String surchargeValue, String timeEstimate) {
-        this.logoId = logoId;
+    public RideDetail(String rideName, String rideCost, String lowRideCost,
+                      String highRideCost, Float surchargeValue, String currencyCode,
+                      String timeEstimate) {
         this.rideName = rideName;
         this.rideCost = rideCost;
+        this.currencyCode = currencyCode;
         this.lowRideCost = lowRideCost;
         this.highRideCost = highRideCost;
         this.surchargeValue = surchargeValue;
         this.timeEstimate = timeEstimate;
     }
 
-    public int getLogoId() {
-        return logoId;
+    public String getCurrencySymbol(){
+        // https://en.wikipedia.org/wiki/ISO_4217
+        if(getCurrencyCode() == null) return "";
+
+        if(getCurrencyCode().equals("USD")){
+            return "$";
+        } else if(currencyCode.equals("INR")){
+            return "Rs";
+        }
+
+        return "";
     }
 
-    public void setLogoId(int logoId) {
-        this.logoId = logoId;
+    public abstract Drawable getAppIcon(Context context) throws PackageManager.NameNotFoundException;
+
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public abstract String getRideCostString();
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
     }
 
     public String getRideName() {
@@ -67,11 +89,11 @@ public abstract class RideDetail {
         this.highRideCost = highRideCost;
     }
 
-    public String getSurchargeValue() {
+    public Float getSurchargeValue() {
         return surchargeValue;
     }
 
-    public void setSurchargeValue(String surchargeValue) {
+    public void setSurchargeValue(Float surchargeValue) {
         this.surchargeValue = surchargeValue;
     }
 

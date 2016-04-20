@@ -70,10 +70,11 @@ public class UberRideUtil extends AbstractRideUtil {
             String priceEstimate = ridePrice.getEstimate();
             String highEstimate = Integer.toString(ridePrice.getHighEstimate());
             String lowEstimate = Integer.toString(ridePrice.getLowEstimate());
-            String surchargeValue = Float.toString(ridePrice.getSurgeMultiplier());
-            UberRideDetail rideDetail = new UberRideDetail(0, displayName,
+            Float surchargeValue = ridePrice.getSurgeMultiplier();
+            UberRideDetail rideDetail = new UberRideDetail(displayName,
                     priceEstimate, lowEstimate, highEstimate, surchargeValue,
-                    "ts");
+                    currencyCode,
+                    "");
             rideDetails.add(rideDetail);
         }
         callback.onRideDetails(rideDetails);

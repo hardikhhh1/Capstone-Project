@@ -40,6 +40,8 @@ public class RideDetailFragment extends Fragment implements AbstractRideUtil.Cal
     private int mColumnCount = 4;
     CeeridePlace pickUpLocation;
     CeeridePlace dropOffLocation;
+    MyRideDetailRecyclerViewAdapter adapter;
+    ArrayList<RideDetail> fragmentRideDetails;
     private OnListFragmentInteractionListener mListener;
 
     /**
@@ -102,8 +104,23 @@ public class RideDetailFragment extends Fragment implements AbstractRideUtil.Cal
     @Override
     public void onRideDetails(ArrayList<RideDetail> rideDetails) {
         TwoWayView recyclerView = (TwoWayView) getView();
-        recyclerView.setAdapter(new MyRideDetailRecyclerViewAdapter(rideDetails,
-                mListener));
+        if(fragmentRideDetails == null){
+            fragmentRideDetails = new ArrayList<>();
+        }
+        fragmentRideDetails.addAll(rideDetails);
+
+        // TODO : ADd the object and notify data changed from last item only
+        // as its much faster.
+        if(adapter != null){
+            adapter.setmRideDetails(fragmentRideDetails);
+            adapter.notifyDataSetChanged();
+        } else{
+            adapter = new MyRideDetailRecyclerViewAdapter(rideDetails,
+                    mListener);
+
+            recyclerView.setAdapter(adapter);
+        }
+
     }
 
 

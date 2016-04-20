@@ -4,24 +4,38 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by harora on 3/22/16.
  */
-public class UberRideDetail extends RideDetail{
+public class LyftRideDetail extends RideDetail{
 
-    public UberRideDetail(String rideName, String rideCost,
+    private String currencyCode;
+
+    public LyftRideDetail(String rideName, String rideCost,
                           String lowRideCost, String highRideCost,
-                          Float surchargeValue, String currencyCode,
-                          String timeEstimate) {
+                          Float surchargeValue,  String timeEstimate) {
         // TODO : THe low ride cost and high ride cost can be null
         // IN CASE OF TAXI
         super(rideName, rideCost, lowRideCost, highRideCost, surchargeValue,
-                currencyCode, timeEstimate);
+                "USD", timeEstimate);
+    }
+
+    @Override
+    public String getHighRideCost() {
+        return String.valueOf(Double.valueOf(super.getHighRideCost()) / 100);
+    }
+
+    @Override
+    public String getLowRideCost() {
+        return String.valueOf(Double.valueOf(super.getLowRideCost()) / 100);
+    }
+
+    @Override
+    public Float getSurchargeValue() {
+        return super.getSurchargeValue() / 100f;
     }
 
     @Override
@@ -30,9 +44,8 @@ public class UberRideDetail extends RideDetail{
                 context.getPackageManager().getInstalledApplications(PackageManager.GET_ACTIVITIES);
         for(ApplicationInfo info : applicationInfos){
             if(info.taskAffinity == null) continue;
-
-            if(info.taskAffinity.toLowerCase().toString().toLowerCase().indexOf("uber") != -1){
-                return  context.getPackageManager().getApplicationIcon(info);
+            if(info.taskAffinity.toLowerCase().toString().toLowerCase().indexOf("lyft") != -1){
+                return context.getPackageManager().getApplicationIcon(info);
             }
         }
         return null;
@@ -45,19 +58,14 @@ public class UberRideDetail extends RideDetail{
             return "Metered";
         }
 
-
         String symbol = "";
-
         if(this.getCurrencyCode() != null){
             symbol = getCurrencySymbol();
         }
-
-        if(getLowRideCost().trim().equals(getHighRideCost().trim())){
-            return "Min. " + symbol + getLowRideCost();
-        }
-
         return symbol + getLowRideCost() + " - " + symbol + getHighRideCost();
 
     }
+
+
 
 }

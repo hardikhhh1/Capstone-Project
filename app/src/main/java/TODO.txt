@@ -16,15 +16,20 @@ Ceeride:
 []    - Move the place auto complete fragment to another fragment
         and have a clear button there to clear it.
 []    - Reach back to the main fragment and show a toast message.
+[] - Add relevant filters to google map auto filter.
 
-
-[]- Add table which has all the places visited information.
-[]- Screen rotation should not destroy any page.
 []- Make ride detail in recycler view have better look
 
-[]- Implement Lyft api
 []- Add widget.
+[]- Implement Lyft api
+
 
 [] - Materialize the ui
-[] - App should open when clicked on detail
+[] - Rides App like uber, lyft etc should open when clicked on detail
 [] - Add mechanism to delete favourites.
+[] - Screen rotation should not destroy any page.
+[]- Add table which has all the places visited information.
+
+
+[] - Update fav when added.
+[] - Add time estimates.

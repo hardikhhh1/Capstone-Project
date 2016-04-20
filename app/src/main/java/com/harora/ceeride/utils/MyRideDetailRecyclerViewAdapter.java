@@ -1,9 +1,12 @@
 package com.harora.ceeride.utils;
 
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.harora.ceeride.R;
@@ -23,13 +26,21 @@ import butterknife.ButterKnife;
 public class MyRideDetailRecyclerViewAdapter extends
         RecyclerView.Adapter<MyRideDetailRecyclerViewAdapter.ViewHolder> {
 
-    private final List<RideDetail> mRideDetails;
+    private List<RideDetail> mRideDetails;
     private final OnListFragmentInteractionListener mListener;
 
     public MyRideDetailRecyclerViewAdapter(List<RideDetail> rideDetails,
                                            OnListFragmentInteractionListener listener) {
         mRideDetails = rideDetails;
         mListener = listener;
+    }
+
+    public List<RideDetail> getmRideDetails() {
+        return mRideDetails;
+    }
+
+    public void setmRideDetails(List<RideDetail> mRideDetails){
+        this.mRideDetails = mRideDetails;
     }
 
     @Override
@@ -64,15 +75,28 @@ public class MyRideDetailRecyclerViewAdapter extends
         public final View mView;
         public RideDetail mRideDetail;
 
+        @Bind(R.id.ride_icon) public ImageView mRideIcon;
+        @Bind(R.id.surcharge_icon) public ImageView mSurchargeIcon;
+        @Bind(R.id.surcharge_value) public TextView mSurchargeValue;
         @Bind(R.id.ride_name) public TextView mRideName;
         @Bind(R.id.price_range) public TextView priceRange;
-        @Bind(R.id.time_estimate) public TextView timeEstimate;
+//        @Bind(R.id.time_estimate) public TextView timeEstimate;
 
         public void setRideDetails(){
+            try {
+                Drawable appIcon = mRideDetail.getAppIcon(mView.getContext());
+                mRideIcon.setImageDrawable(appIcon);
+            } catch (PackageManager.NameNotFoundException e){
+
+            }
+            Float surchargeValue = mRideDetail.getSurchargeValue();
+            if(surchargeValue > 1.0){
+                mSurchargeIcon.setVisibility(View.VISIBLE);
+                mSurchargeValue.setText(Float.toString(surchargeValue));
+            }
             mRideName.setText(mRideDetail.getRideName());
-            priceRange.setText(mRideDetail.getLowRideCost() + " - " +
-                mRideDetail.getHighRideCost());
-            timeEstimate.setText(mRideDetail.getTimeEstimate());
+            priceRange.setText(mRideDetail.getRideCostString());
+//            timeEstimate.setText(mRideDetail.getTimeEstimate());
         }
 
         public ViewHolder(View view) {
