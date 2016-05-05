@@ -1,28 +1,85 @@
 package com.harora.ceeride.model;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.nio.DoubleBuffer;
 
 /**
  * Created by harora on 3/22/16.
  */
-public abstract class RideDetail {
+public abstract class RideDetail implements Parcelable {
 
+    private String rideId;
     private String rideName;
     private String rideCost;
     private String lowRideCost;
     private String highRideCost;
-    private Float surchargeValue;
     private String timeEstimate;
     private String currencyCode;
+
+    private Float surchargeValue;
+
+    private Double pickUpLatitude;
+    private Double pickUpLongitude;
+    private Double destinationLatitude;
+    private Double destinationLongitude;
 
     public RideDetail() {
     }
 
-    public RideDetail(String rideName, String rideCost, String lowRideCost,
+    public RideDetail(Parcel in){
+        String data[] = new String[7];
+        in.readStringArray(data);
+        this.rideId = data[0];
+        this.rideName = data[1];
+        this.rideCost = data[2];
+        this.lowRideCost = data[3];
+        this.highRideCost = data[4];
+        this.timeEstimate = data[5];
+        this.currencyCode = data[6];
+
+        this.surchargeValue = in.readFloat();
+
+        this.pickUpLatitude = in.readDouble();
+        this.pickUpLongitude = in.readDouble();
+        this.destinationLatitude = in.readDouble();
+        this.destinationLongitude = in.readDouble();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeStringArray(new String[]{
+                this.rideId,
+                this.rideName,
+                this.rideCost,
+                this.lowRideCost,
+                this.highRideCost,
+                this.timeEstimate,
+                this.currencyCode,
+        });
+        parcel.writeFloat(this.surchargeValue);
+
+        parcel.writeDouble(this.pickUpLatitude);
+        parcel.writeDouble(this.pickUpLongitude);
+        parcel.writeDouble(this.destinationLatitude);
+        parcel.writeDouble(this.destinationLongitude);
+    }
+
+    public RideDetail(String rideId, String rideName, String rideCost, String lowRideCost,
                       String highRideCost, Float surchargeValue, String currencyCode,
-                      String timeEstimate) {
+                      String timeEstimate, Double pickUpLatitude, Double pickUpLongitude,
+                      Double destinationLatitude, Double destinationLongitude) {
+        this.rideId = rideId;
         this.rideName = rideName;
         this.rideCost = rideCost;
         this.currencyCode = currencyCode;
@@ -30,6 +87,10 @@ public abstract class RideDetail {
         this.highRideCost = highRideCost;
         this.surchargeValue = surchargeValue;
         this.timeEstimate = timeEstimate;
+        this.pickUpLatitude = pickUpLatitude;
+        this.pickUpLongitude = pickUpLongitude;
+        this.destinationLatitude = destinationLatitude;
+        this.destinationLongitude = destinationLongitude;
     }
 
     public String getCurrencySymbol(){
@@ -44,6 +105,28 @@ public abstract class RideDetail {
 
         return "";
     }
+
+    public String getRideId() {
+        return rideId;
+    }
+
+    public void setRideId(String rideId) {
+        this.rideId = rideId;
+    }
+
+    static boolean isPackageInstalled(Context context, String packageId) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(packageId, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            // ignored.
+        }
+        return false;
+    }
+
+
+    public abstract void openApp(Activity activity) throws PackageManager.NameNotFoundException;
 
     public abstract Drawable getAppIcon(Context context) throws PackageManager.NameNotFoundException;
 
@@ -103,5 +186,37 @@ public abstract class RideDetail {
 
     public void setTimeEstimate(String timeEstimate) {
         this.timeEstimate = timeEstimate;
+    }
+
+    public Double getPickUpLatitude() {
+        return pickUpLatitude;
+    }
+
+    public void setPickUpLatitude(Double pickUpLatitude) {
+        this.pickUpLatitude = pickUpLatitude;
+    }
+
+    public Double getPickUpLongitude() {
+        return pickUpLongitude;
+    }
+
+    public void setPickUpLongitude(Double pickUpLongitude) {
+        this.pickUpLongitude = pickUpLongitude;
+    }
+
+    public Double getDestinationLatitude() {
+        return destinationLatitude;
+    }
+
+    public void setDestinationLatitude(Double destinationLatitude) {
+        this.destinationLatitude = destinationLatitude;
+    }
+
+    public Double getDestinationLongitude() {
+        return destinationLongitude;
+    }
+
+    public void setDestinationLongitude(Double destinationLongitude) {
+        this.destinationLongitude = destinationLongitude;
     }
 }

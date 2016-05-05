@@ -1,7 +1,10 @@
 package com.harora.ceeride.utils;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,13 +17,13 @@ import android.widget.Toast;
 import com.harora.ceeride.R;
 import com.harora.ceeride.model.CeeridePlace;
 import com.harora.ceeride.model.RideDetail;
-import com.harora.ceeride.model.UberRideDetail;
+import com.harora.ceeride.service.CeerideReciever;
+import com.harora.ceeride.service.CeerideRideService;
 
 import org.lucasr.twowayview.widget.DividerItemDecoration;
 import org.lucasr.twowayview.widget.TwoWayView;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 
 /**
@@ -29,12 +32,13 @@ import java.util.Set;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class RideDetailFragment extends Fragment implements AbstractRideUtil.Callback {
+public class RideDetailFragment extends Fragment implements CeerideReciever.Callback{
 
     // TODO: Customize parameter argument names
     public static final String ARG_COLUMN_COUNT = "column-count";
     public static final String PICK_UP_LOCATION = "pick-up-location";
     public static final String DROP_OFF_LOCATION = "drop-off-location";
+    public static final String BROADCASTRECIEVER_MSG = "rideDetailsRecieved";
     // TODO: Customize parameters
 
     private int mColumnCount = 4;
@@ -42,6 +46,7 @@ public class RideDetailFragment extends Fragment implements AbstractRideUtil.Cal
     CeeridePlace dropOffLocation;
     MyRideDetailRecyclerViewAdapter adapter;
     ArrayList<RideDetail> fragmentRideDetails;
+    CeerideReciever reciever;
     private OnListFragmentInteractionListener mListener;
 
     /**
@@ -50,6 +55,8 @@ public class RideDetailFragment extends Fragment implements AbstractRideUtil.Cal
      */
     public RideDetailFragment() {
     }
+
+
 
     public void showExceptionMessage(String message){
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
@@ -81,6 +88,11 @@ public class RideDetailFragment extends Fragment implements AbstractRideUtil.Cal
             showExceptionMessage("Please select drop off location");
         }
 
+        reciever = new CeerideReciever(this);
+
+        IntentFilter filter = new IntentFilter(BROADCASTRECIEVER_MSG);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        this.getActivity().registerReceiver(reciever, filter);
     }
 
 

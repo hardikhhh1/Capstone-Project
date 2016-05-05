@@ -81,6 +81,7 @@ public final class LyftClient {
 
                 @Override
                 public Request authenticate(Route route, Response response) throws IOException {
+                    //TODO : Add counter for no of authentication tries.
                     System.out.println("Authenticating for response: " + response);
                     System.out.println("Challenges: " + response.challenges());
                     isAuthenticated = false;

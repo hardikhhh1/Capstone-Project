@@ -1,9 +1,17 @@
 package com.harora.ceeride.model;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+import com.harora.ceeride.utils.LyftRideUtil;
 
 import java.util.List;
 
@@ -13,15 +21,35 @@ import java.util.List;
 public class LyftRideDetail extends RideDetail{
 
     private String currencyCode;
+    private final String TAG = LyftRideDetail.class.getSimpleName();
 
-    public LyftRideDetail(String rideName, String rideCost,
+    private static final String LYFT_PACKAGE = "me.lyft.android";
+
+    public LyftRideDetail(String rideId, String rideName, String rideCost,
                           String lowRideCost, String highRideCost,
-                          Float surchargeValue,  String timeEstimate) {
+                          Float surchargeValue,  String timeEstimate,
+                          Double pickUpLatitude, Double pickUpLongitude,
+                          Double destinationLatitude, Double destinationLongitude) {
         // TODO : THe low ride cost and high ride cost can be null
         // IN CASE OF TAXI
-        super(rideName, rideCost, lowRideCost, highRideCost, surchargeValue,
-                "USD", timeEstimate);
+        super(rideId, rideName, rideCost, lowRideCost, highRideCost, surchargeValue,
+                "USD", timeEstimate, pickUpLatitude, pickUpLongitude, destinationLatitude,
+                destinationLongitude);
     }
+
+    public LyftRideDetail(Parcel in) {
+        super(in);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public RideDetail createFromParcel(Parcel in) {
+            return new LyftRideDetail(in);
+        }
+
+        public RideDetail[] newArray(int size) {
+            return new LyftRideDetail[size];
+        }
+    };
 
     @Override
     public String getHighRideCost() {
@@ -64,6 +92,41 @@ public class LyftRideDetail extends RideDetail{
         }
         return symbol + getLowRideCost() + " - " + symbol + getHighRideCost();
 
+    }
+
+    @Override
+    public void openApp(Activity activity) throws PackageManager.NameNotFoundException {
+        if (isPackageInstalled(activity, LYFT_PACKAGE)) {
+            //This intent will help you to launch if the package is already installed
+            openLink(activity, getDeepLink());
+            Log.d(TAG, "Lyft is installed on the phone, opening the app. ");
+        } else {
+            openLink(activity, "https://play.google.com/store/apps/details?id=" + LYFT_PACKAGE);
+            Log.d(TAG, "Lyft is not currently installed on your phone, opening Play Store.");
+        }
+    }
+
+
+    private  String getDeepLink(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("lyft://");
+        builder.append("?ridetype=" + getRideName());
+        builder.append("&");
+        builder.append("pickup[latitude]=" + Double.toString(getPickUpLatitude()));
+        builder.append("&");
+        builder.append("pickup[longitude]=" +  Double.toString(getPickUpLongitude()));
+        builder.append("&");
+        builder.append("destination[latitude]=" +  Double.toString(getDestinationLatitude()));
+        builder.append("&");
+        builder.append("destination[longitude]=" +  Double.toString(getDestinationLongitude()));
+        return builder.toString();
+    }
+
+    static void openLink(Activity activity, String link) {
+        Intent playStoreIntent = new Intent(Intent.ACTION_VIEW);
+        playStoreIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        playStoreIntent.setData(Uri.parse(link));
+        activity.startActivity(playStoreIntent);
     }
 
 

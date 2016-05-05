@@ -65,17 +65,18 @@ public class UberRideUtil extends AbstractRideUtil {
         ArrayList<RideDetail> rideDetails = new ArrayList<>();
 
         for(Price ridePrice : priceEstimates.getPrices()){
+            String rideId = ridePrice.getProductId();
             String currencyCode = ridePrice.getCurrencyCode();
             String displayName = ridePrice.getDisplayName();
             String priceEstimate = ridePrice.getEstimate();
             String highEstimate = Integer.toString(ridePrice.getHighEstimate());
             String lowEstimate = Integer.toString(ridePrice.getLowEstimate());
             Float surchargeValue = ridePrice.getSurgeMultiplier();
-            UberRideDetail rideDetail = new UberRideDetail(displayName,
-                    priceEstimate, lowEstimate, highEstimate, surchargeValue,
-                    currencyCode,
-                    "");
-            rideDetails.add(rideDetail);
+//            UberRideDetail rideDetail = new UberRideDetail(rideId, displayName,
+//                    priceEstimate, lowEstimate, highEstimate, surchargeValue,
+//                    currencyCode,
+//                    "");
+//            rideDetails.add(rideDetail);
         }
         callback.onRideDetails(rideDetails);
     }

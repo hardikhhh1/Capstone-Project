@@ -74,6 +74,7 @@ public class LyftRideUtil extends AbstractRideUtil {
 
         for(Cost ridePrice : priceEstimates.getCostEstimates()){
 //            String currencyCode = ridePrice.getCurrency();
+            String rideType = ridePrice.getRideType();
             String displayName = ridePrice.getDisplayName();
             String priceEstimate = ridePrice.getCurrency();
             String highEstimate = Integer.toString(ridePrice.getEstimatedCostCentsMax());
@@ -81,10 +82,10 @@ public class LyftRideUtil extends AbstractRideUtil {
             String surcharge = ridePrice.getPrimetimePercentage();
             surcharge = surcharge.substring(0, surcharge.lastIndexOf("%"));
             Float surchargeValue = Float.valueOf(surcharge);
-            LyftRideDetail rideDetail = new LyftRideDetail(displayName,
-                    priceEstimate, lowEstimate, highEstimate, surchargeValue,
-                    "");
-            rideDetails.add(rideDetail);
+//            LyftRideDetail rideDetail = new LyftRideDetail(rideType, displayName,
+//                    priceEstimate, lowEstimate, highEstimate, surchargeValue,
+//                    "");
+//            rideDetails.add(rideDetail);
         }
         callback.onRideDetails(rideDetails);
     }

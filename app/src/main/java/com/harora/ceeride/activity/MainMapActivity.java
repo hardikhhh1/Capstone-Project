@@ -248,7 +248,10 @@ public class MainMapActivity extends AppCompatActivity implements
             destinationLocation = getFragment( R.id.destination_fragment);
             typeFilter = new AutocompleteFilter.Builder()
                     .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
+                    .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
                     .build();
+            pickUpLocation.setFilter(typeFilter);
+            destinationLocation.setFilter(typeFilter);
             mapsFragment = (MapsFragment) getSupportFragmentManager().findFragmentByTag(LOG_TAG);
             mActivity  = activity;
             ButterKnife.bind(this, activity);
