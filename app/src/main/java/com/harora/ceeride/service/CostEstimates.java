@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class CostEstimates {
 
-    List<Cost> costEstimates;
+    private List<Cost> costEstimates;
 
     public List<Cost> getCostEstimates() {
         return costEstimates;

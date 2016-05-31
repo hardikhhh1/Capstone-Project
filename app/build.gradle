@@ -10,6 +10,10 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
+        dexOptions {
+            javaMaxHeapSize "4g"
+        }
     }
     buildTypes {
         release {
@@ -49,6 +53,7 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.0'
     compile 'net.iharder:base64:2.3.8'
 
+    compile 'com.android.support:multidex:1.0.0'
 
     testCompile 'junit:junit:4.12'
 

@@ -1,4 +1,4 @@
 package com.lib;
 
-public class LyftApi {
+class LyftApi {
 }

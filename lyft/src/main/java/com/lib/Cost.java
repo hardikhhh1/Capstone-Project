@@ -3,7 +3,7 @@ package com.lib;
 /**
  * Created by harora on 4/6/16.
  */
-public class Cost {
+class Cost {
 
     private String rideType;
     private String displayName;

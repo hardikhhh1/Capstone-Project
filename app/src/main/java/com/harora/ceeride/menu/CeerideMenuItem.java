@@ -1,4 +1,4 @@
-package com.harora.ceeride.contextmenu;
+package com.harora.ceeride.menu;
 
 import android.content.Context;
 import android.util.Log;
@@ -7,12 +7,13 @@ import com.yalantis.contextmenu.lib.MenuObject;
 
 /**
  * Created by harora on 3/27/16.
+ * Abstract class for any menu item in the context menu.
  */
 public abstract class CeerideMenuItem  implements ContextMenu.ContextMenuItem{
 
     private MenuObject menuObject;
 
-    public CeerideMenuItem() {
+    protected CeerideMenuItem() {
     }
 
     public CeerideMenuItem(MenuObject menuObject) {
@@ -23,7 +24,7 @@ public abstract class CeerideMenuItem  implements ContextMenu.ContextMenuItem{
         return menuObject;
     }
 
-    public void setMenuObject(MenuObject menuObject) {
+    protected void setMenuObject(MenuObject menuObject) {
         this.menuObject = menuObject;
     }
 

@@ -7,8 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.nio.DoubleBuffer;
-
 /**
  * Created by harora on 3/22/16.
  */
@@ -29,10 +27,10 @@ public abstract class RideDetail implements Parcelable {
     private Double destinationLatitude;
     private Double destinationLongitude;
 
-    public RideDetail() {
+    RideDetail() {
     }
 
-    public RideDetail(Parcel in){
+    RideDetail(Parcel in) {
         String data[] = new String[7];
         in.readStringArray(data);
         this.rideId = data[0];
@@ -49,6 +47,35 @@ public abstract class RideDetail implements Parcelable {
         this.pickUpLongitude = in.readDouble();
         this.destinationLatitude = in.readDouble();
         this.destinationLongitude = in.readDouble();
+    }
+
+    RideDetail(String rideId, String rideName, String rideCost, String lowRideCost,
+               String highRideCost, Float surchargeValue, String currencyCode,
+               String timeEstimate, Double pickUpLatitude, Double pickUpLongitude,
+               Double destinationLatitude, Double destinationLongitude) {
+        this.rideId = rideId;
+        this.rideName = rideName;
+        this.rideCost = rideCost;
+        this.currencyCode = currencyCode;
+        this.lowRideCost = lowRideCost;
+        this.highRideCost = highRideCost;
+        this.surchargeValue = surchargeValue;
+        this.timeEstimate = timeEstimate;
+        this.pickUpLatitude = pickUpLatitude;
+        this.pickUpLongitude = pickUpLongitude;
+        this.destinationLatitude = destinationLatitude;
+        this.destinationLongitude = destinationLongitude;
+    }
+
+    static boolean isPackageInstalled(Context context, String packageId) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(packageId, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            // ignored.
+        }
+        return false;
     }
 
     @Override
@@ -75,25 +102,7 @@ public abstract class RideDetail implements Parcelable {
         parcel.writeDouble(this.destinationLongitude);
     }
 
-    public RideDetail(String rideId, String rideName, String rideCost, String lowRideCost,
-                      String highRideCost, Float surchargeValue, String currencyCode,
-                      String timeEstimate, Double pickUpLatitude, Double pickUpLongitude,
-                      Double destinationLatitude, Double destinationLongitude) {
-        this.rideId = rideId;
-        this.rideName = rideName;
-        this.rideCost = rideCost;
-        this.currencyCode = currencyCode;
-        this.lowRideCost = lowRideCost;
-        this.highRideCost = highRideCost;
-        this.surchargeValue = surchargeValue;
-        this.timeEstimate = timeEstimate;
-        this.pickUpLatitude = pickUpLatitude;
-        this.pickUpLongitude = pickUpLongitude;
-        this.destinationLatitude = destinationLatitude;
-        this.destinationLongitude = destinationLongitude;
-    }
-
-    public String getCurrencySymbol(){
+    String getCurrencySymbol() {
         // https://en.wikipedia.org/wiki/ISO_4217
         if(getCurrencyCode() == null) return "";
 
@@ -106,7 +115,7 @@ public abstract class RideDetail implements Parcelable {
         return "";
     }
 
-    public String getRideId() {
+    String getRideId() {
         return rideId;
     }
 
@@ -114,31 +123,19 @@ public abstract class RideDetail implements Parcelable {
         this.rideId = rideId;
     }
 
-    static boolean isPackageInstalled(Context context, String packageId) {
-        PackageManager pm = context.getPackageManager();
-        try {
-            pm.getPackageInfo(packageId, PackageManager.GET_ACTIVITIES);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            // ignored.
-        }
-        return false;
-    }
-
-
     public abstract void openApp(Activity activity) throws PackageManager.NameNotFoundException;
 
     public abstract Drawable getAppIcon(Context context) throws PackageManager.NameNotFoundException;
 
-    public String getCurrencyCode() {
+    String getCurrencyCode() {
         return currencyCode;
     }
-
-    public abstract String getRideCostString();
 
     public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
     }
+
+    public abstract String getRideCostString();
 
     public String getRideName() {
         return rideName;
@@ -188,7 +185,7 @@ public abstract class RideDetail implements Parcelable {
         this.timeEstimate = timeEstimate;
     }
 
-    public Double getPickUpLatitude() {
+    Double getPickUpLatitude() {
         return pickUpLatitude;
     }
 
@@ -196,7 +193,7 @@ public abstract class RideDetail implements Parcelable {
         this.pickUpLatitude = pickUpLatitude;
     }
 
-    public Double getPickUpLongitude() {
+    Double getPickUpLongitude() {
         return pickUpLongitude;
     }
 
@@ -204,15 +201,11 @@ public abstract class RideDetail implements Parcelable {
         this.pickUpLongitude = pickUpLongitude;
     }
 
-    public Double getDestinationLatitude() {
+    Double getDestinationLatitude() {
         return destinationLatitude;
     }
 
-    public void setDestinationLatitude(Double destinationLatitude) {
-        this.destinationLatitude = destinationLatitude;
-    }
-
-    public Double getDestinationLongitude() {
+    Double getDestinationLongitude() {
         return destinationLongitude;
     }
 

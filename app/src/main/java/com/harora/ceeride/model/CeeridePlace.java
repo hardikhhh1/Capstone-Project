@@ -10,6 +10,16 @@ import com.google.android.gms.location.places.Place;
  */
 public class CeeridePlace implements Parcelable{
 
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public CeeridePlace createFromParcel(Parcel in) {
+            return new CeeridePlace(in);
+        }
+
+        @Override
+        public Object[] newArray(int i) {
+            return new CeeridePlace[0];
+        }
+    };
     private double latitude;
     private double longitude;
     private String placeName;
@@ -25,7 +35,7 @@ public class CeeridePlace implements Parcelable{
                 place.getName().toString());
     }
 
-    public CeeridePlace(Parcel input){
+    private CeeridePlace(Parcel input) {
         this(input.readDouble(), input.readDouble(), input.readString());
     }
 
@@ -64,15 +74,4 @@ public class CeeridePlace implements Parcelable{
     public int describeContents() {
         return 0;
     }
-
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public CeeridePlace createFromParcel(Parcel in) {
-            return new CeeridePlace(in);
-        }
-
-        @Override
-        public Object[] newArray(int i) {
-            return new CeeridePlace[0];
-        }
-    };
 }

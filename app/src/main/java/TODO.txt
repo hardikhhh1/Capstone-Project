@@ -1,5 +1,65 @@
 Ceeride:
+    [] - For now show the surcharge information, and arrival time information.
 
+[] - If Admob is used, the app displays test ads. If Admob was not used, student meets specifications.
+[] - App builds and deploys using the installRelease Gradle task.
+[] - App is equipped with a signing configuration, and the keystore and passwords are included in the repository.
+     Keystore is referred to by a relative path.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+version 2:
+[] - App uses a Loader to move its data to its views.
+
+[] - When a name is cleared at any point.
+[]    - Move the place auto complete fragment to another fragment
+        and have a clear button there to clear it.
+[]- Add table which has all the places visited information.
+[] - Add time estimates.
+[] - Add mechanism to delete favourites.
+
+DONE:
 [√]- Map should open with the user present location
 [√]   - Gps button should be present on the map
 [√]   - And the src location should be filled.
@@ -16,7 +76,7 @@ Ceeride:
 [√] - App integrates two or more Google services
 [√] - Each service imported in the build.gradle is used in the app.
 [√] - If Location is used, the app customizes the user’s experience by using the device's location.
-[] - If Admob is used, the app displays test ads. If Admob was not used, student meets specifications.
+
 [√] - If Maps is used, the map provides relevant information to the user. If Maps was not used, student meets specifications.
 
 [√] - App theme extends AppCompat.
@@ -29,47 +89,17 @@ Ceeride:
 [√] - App builds from a clean repository checkout with no additional configuration.
 [√] - All app dependencies are managed by Gradle.
 [√] - App implements a ContentProvider to access locally stored data.
-
-April 26th and 27th:
 [√] - Rides App like uber, lyft etc should open when clicked on detail
-[] - Screen rotation should not destroy any page.
-
-Aprl 28th and 29th:
-[] - Update list of favs when added.
 [√] - Add relevant filters to google map auto filter.
-
-Aprl 30th
-[] - Must implement at least one of the three
+[√] - Must implement at least one of the three
     If it needs to pull or send data to/from a web service or API only once,
     or on a per request basis (such as a search application), app uses an IntentService to do so.
-[] - App uses a Loader to move its data to its views.
-
-Aprl  30th and may 1:
-[] - App provides a widget to provide relevant information to the user on the home screen.
-[] - Add widget.
-- For now show the surcharge information, and arrival time information.
-
-
-May 2 - 5:
 [] - App includes support for accessibility. That includes content descriptions,
     navigation using a D-pad, and, if applicable, non-audio versions of audio cues.
-[] - App keeps all strings in a strings.xml file and enables RTL layout switching on all layouts.
-[] - Reach back to the main fragment and show a toast message.
 
+[] - App provides a widget to provide relevant information to the user on the home screen.
 
-May 5 - 7th:
-[] - App validates all input from servers and users. If data does not exist or is in the wrong format,
-    the app logs this fact and does not crash.
+[] - Update list of favs when added.
+[] - Least favourites should be removed automatically.
 [] - App uses standard and simple transitions between activities.
-[] - App builds and deploys using the installRelease Gradle task.
-[] - App is equipped with a signing configuration, and the keystore and passwords are included in the repository.
-     Keystore is referred to by a relative path.
-
-
-version 2:
-[] - When a name is cleared at any point.
-[]    - Move the place auto complete fragment to another fragment
-        and have a clear button there to clear it.
-[]- Add table which has all the places visited information.
-[] - Add time estimates.
-[] - Add mechanism to delete favourites.
+[] - App keeps all strings in a strings.xml file and enables RTL layout switching on all layouts.

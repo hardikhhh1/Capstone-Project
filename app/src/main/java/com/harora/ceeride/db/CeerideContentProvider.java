@@ -8,8 +8,10 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * Created by harora on 3/25/16.
@@ -17,7 +19,9 @@ import android.text.TextUtils;
 public class CeerideContentProvider extends ContentProvider {
 
 
-    CeerideSqlOpenHelper mCeerideSqliteHelper;
+    public static final String DB_RAW_QUERY = "PRAGMA table_info(favorites)";
+    private static final String LOG_TAG = CeerideContentProvider.class.getSimpleName();
+    private CeerideSqlOpenHelper mCeerideSqliteHelper;
 
     @Override
     public boolean onCreate() {
@@ -27,7 +31,7 @@ public class CeerideContentProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(Uri uri, String[] projection,
+    public Cursor query(@NonNull Uri uri, String[] projection,
                         String selection, String[] selectionArgs,
                         String sortOrder){
         SQLiteDatabase db = mCeerideSqliteHelper.getReadableDatabase();
@@ -38,11 +42,6 @@ public class CeerideContentProvider extends ContentProvider {
                 if (TextUtils.isEmpty(sortOrder)) {
                     sortOrder = CeerideContract.Favorite.SORT_ORDER_DEFAULT;
                 }
-                break;
-            case CeerideContract.FAVORITE_ID:
-//                builder.setTables(CeerideContract.Favorite.);
-//                builder.appendWhere(CeerideContract.Favorite. + " = " +
-//                    uri.getLastPathSegment());
                 break;
         }
 
@@ -55,12 +54,6 @@ public class CeerideContentProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-        // if we want to be notified of any changes:
-//        if (useAuthorityUri) {
-//            cursor.setNotificationUri(
-//                    getContext().getContentResolver(),
-//                    LentItemsContract.CONTENT_URI);
-//        }
         cursor.setNotificationUri(
                 getContext().getContentResolver(),
                 uri);
@@ -69,52 +62,50 @@ public class CeerideContentProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Uri insert(Uri uri, ContentValues contentValues) {
+    public Uri insert(@NonNull Uri uri, ContentValues contentValues) {
         SQLiteDatabase db = mCeerideSqliteHelper.getWritableDatabase();
-        Cursor ti = db.rawQuery("PRAGMA table_info(favorites)", null);
-        if ( ti.moveToFirst() ) {
-            do {
-                System.out.println("col: " + ti.getString(1));
-            } while (ti.moveToNext());
-        }
-        if (CeerideContract.URI_MATCHER.match(uri) == CeerideContract.FAVORITE_LIST){
-            long id = db.insert(DbSchema.Favorite.TABLE_NAME,
-                    null,
-                    contentValues);
-            return getUriForId(id, uri);
+        Cursor ti = db.rawQuery(DB_RAW_QUERY, null);
+        try {
+            if (CeerideContract.URI_MATCHER.match(uri) == CeerideContract.FAVORITE_LIST) {
+                long id = db.insert(DbSchema.Favorite.TABLE_NAME,
+                        null,
+                        contentValues);
+                return getUriForId(id, uri);
+            }
+        } catch (SQLException e) {
+            Log.e(LOG_TAG, "Error while inserting : " + e.getMessage());
+        } finally {
+            ti.close();
         }
         return null;
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] strings) {
+    public int delete(@NonNull Uri uri, String s, String[] strings) {
         return 0;
     }
 
     @Override
-    public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
+    public int update(@NonNull Uri uri, ContentValues contentValues, String s, String[] strings) {
         return 0;
     }
 
     private Uri getUriForId(long id, Uri uri) {
         if (id > 0) {
             Uri itemUri = ContentUris.withAppendedId(uri, id);
-//            if (!isInBatchMode()) {
                 // notify all listeners of changes:
                 getContext().
                         getContentResolver().
                         notifyChange(itemUri, null);
-//            }
             return itemUri;
         }
-        // s.th. went wrong:
-        throw new SQLException(
-                "Problem while inserting into uri: " + uri);
+
+        throw new SQLException("Problem while inserting into uri: " + uri);
     }
 
     @Nullable
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         switch (CeerideContract.URI_MATCHER.match(uri)){
             case CeerideContract.FAVORITE_ID:
                 return CeerideContract.Favorite.CONTENT_TYPE;

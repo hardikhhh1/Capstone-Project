@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
 
 public class MyRideDetailRecyclerFragment extends Fragment{
 
-    RecyclerView ridesAdaptor;
+    private RecyclerView ridesAdaptor;
 
 
     @Override

@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,8 +16,8 @@ public class CeeridePreferences {
 
     public static final String UBER_RIDE = "Uber";
     public static final String LYFT_RIDE = "Lyft";
-    public static final String UBER_RIDE_PREFERENCE = "uber_ride_preference";
     public static final String LYFT_RIDE_PREFERENCE = "lyft_ride_preference";
+    private static final String UBER_RIDE_PREFERENCE = "uber_ride_preference";
 
     public static Set<String> getRides(Context context){
         List<String> rides = new ArrayList<>();
@@ -26,10 +25,9 @@ public class CeeridePreferences {
         if(SP.getBoolean(UBER_RIDE_PREFERENCE, true)){
             rides.add(UBER_RIDE);
         }
-        // TODO : add lyft
-//        if(SP.getBoolean(LYFT_RIDE_PREFERENCE, true)){
-//            rides.add(LYFT_RIDE);
-//        }
+        if (SP.getBoolean(LYFT_RIDE_PREFERENCE, true)) {
+            rides.add(LYFT_RIDE);
+        }
         return new HashSet<>(rides);
     }
 

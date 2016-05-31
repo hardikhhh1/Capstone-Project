@@ -1,4 +1,4 @@
-package com.harora.ceeride.utils;
+package com.harora.ceeride.fragments;
 
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceFragmentCompat;

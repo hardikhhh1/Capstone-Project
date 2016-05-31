@@ -1,7 +1,5 @@
 package com.harora.ceeride.service;
 
-import android.util.Base64;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,7 +14,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -29,25 +26,19 @@ import retrofit2.http.Query;
  * Created by harora on 4/6/16.
  */
 public final class LyftClient {
-    public static final String BASE_URL = "https://api.lyft.com/";
-
-    private String clientId;
-    private String clientSecret;
-    private String authToken;
+    private static final String BASE_URL = "https://api.lyft.com/";
     private static LyftClient lyftClient;
+    private String authToken;
     private Boolean isAuthenticated;
 
-    Gson gson = new GsonBuilder()
+    private Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
-    OkHttpClient.Builder okHttpClientBuilder;
-    Retrofit retrofit;
+    private OkHttpClient.Builder okHttpClientBuilder;
+    private Retrofit retrofit;
 
-    public LyftClient(final String clientId, final String clientSecret){
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-
+    private LyftClient(final String clientId, final String clientSecret) {
         this.gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
@@ -82,8 +73,6 @@ public final class LyftClient {
                 @Override
                 public Request authenticate(Route route, Response response) throws IOException {
                     //TODO : Add counter for no of authentication tries.
-                    System.out.println("Authenticating for response: " + response);
-                    System.out.println("Challenges: " + response.challenges());
                     isAuthenticated = false;
 
                     HashMap<String, Object> data = new HashMap<String, Object>();
@@ -100,10 +89,9 @@ public final class LyftClient {
                     TokenInformation info = call.body();
                     isAuthenticated = true;
                     authToken = info.accessToken;
-                    Request request= response.request().newBuilder()
+                    return response.request().newBuilder()
                             .header("Authorization", "Bearer " + authToken)
                             .build();
-                    return request;
                 }
 
 

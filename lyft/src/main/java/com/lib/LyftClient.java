@@ -23,29 +23,26 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
-import sun.misc.BASE64Encoder;
-import sun.misc.DoubleConsts;
 
 /**
  * Created by harora on 4/6/16.
  */
 public final class LyftClient {
-    public static final String BASE_URL = "https://api.lyft.com/";
-
+    private static final String BASE_URL = "https://api.lyft.com/";
+    private static LyftClient lyftClient;
     private String clientId;
     private String clientSecret;
     private String authToken;
-    private static LyftClient lyftClient;
     private Boolean isAuthenticated;
 
-    Gson gson = new GsonBuilder()
+    private Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
-    OkHttpClient.Builder okHttpClientBuilder;
-    Retrofit retrofit;
+    private OkHttpClient.Builder okHttpClientBuilder;
+    private Retrofit retrofit;
 
-    public LyftClient(final String clientId, final String clientSecret){
+    private LyftClient(final String clientId, final String clientSecret) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
 

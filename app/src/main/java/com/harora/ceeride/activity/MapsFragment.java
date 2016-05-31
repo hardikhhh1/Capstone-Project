@@ -4,10 +4,12 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,25 +41,19 @@ import java.util.Locale;
  */
 public class MapsFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        GoogleMap.OnMyLocationButtonClickListener{
+        GoogleMap.OnMyLocationButtonClickListener {
 
-    public static final String LOG_TAG = MapsFragment.class.getSimpleName();
+    private static final String LOG_TAG = MapsFragment.class.getSimpleName();
 
-    MapView mapView;
-    GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
     private LatLng[] latLngMarkers;
 
     private GoogleApiClient mGoogleApiClient;
 
-//    private Double longitude;
-//    private Double latitude;
-//    private String locationProvider = LocationManager.GPS_PROVIDER;
-//    private LocationManager locationManager ;
-
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.d(LOG_TAG, "The connection have been suspended");
     }
 
     @Override
@@ -68,7 +64,13 @@ public class MapsFragment extends Fragment implements
     @Override
     public void onConnected(Bundle connectionHint) {
         mGoogleApiClient.connect();
-
+        if (ActivityCompat.checkSelfPermission(this.getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this.getActivity(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(LOG_TAG, "Not all permission provided, cannot find the location. Returning.");
+            return;
+        }
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         Location mLastLocation = getPresentLocation();
@@ -87,7 +89,6 @@ public class MapsFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_maps, container, false);
-
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(getContext())
@@ -97,7 +98,7 @@ public class MapsFragment extends Fragment implements
                     .build();
         }
 
-        mapView = (MapView) view.findViewById(R.id.mapView);
+        MapView mapView = (MapView) view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
 
@@ -107,6 +108,7 @@ public class MapsFragment extends Fragment implements
             e.printStackTrace();
         }
 
+        Log.d(LOG_TAG, "Getting google map to display");
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -119,17 +121,10 @@ public class MapsFragment extends Fragment implements
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
             }
         });
+
         return view;
 
     }
-
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
 
     public void markAndZoomMap(LatLng latLng, int index){
         if(latLngMarkers == null){
@@ -140,6 +135,7 @@ public class MapsFragment extends Fragment implements
 
 
         if(latLngMarkers[0] != null && latLngMarkers[1] != null){
+            // If only one location has been selected.
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             for(LatLng latLngMarker : latLngMarkers){
                 builder.include(latLngMarker);
@@ -155,45 +151,46 @@ public class MapsFragment extends Fragment implements
             mMap.moveCamera(center);
             mMap.animateCamera(zoom);
         }
-
     }
 
+    @Nullable
     private Location getPresentLocation(){
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+            return LocationServices.FusedLocationApi.getLastLocation(
                     mGoogleApiClient);
-            return mLastLocation;
         } else {
             // TODO: Show rationale and request permission.
         }
         return null;
     }
 
+    @Nullable
     private CeeridePlace getPresentPlace(Location mLastLocation){
+        Log.d(LOG_TAG, "Getting present location");
 
-            Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-            try {
-                List<Address> addresses = geocoder.getFromLocation(
-                        mLastLocation.getLatitude(),
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(
+                    mLastLocation.getLatitude(),
+                    mLastLocation.getLongitude(),
+                    // In this sample, get just a single address.
+                    1);
+            if (addresses.size() > 0) {
+                String addressLine = addresses.get(0).getAddressLine(0);
+                return new CeeridePlace(mLastLocation.getLatitude(),
                         mLastLocation.getLongitude(),
-                        // In this sample, get just a single address.
-                        1);
-                if(addresses.size() > 0){
-                    String addressLine = addresses.get(0).getAddressLine(0);
-                    return new CeeridePlace(mLastLocation.getLatitude(),
-                            mLastLocation.getLongitude(),
-                            addressLine);
-                }
-            } catch (IOException e){
-                Log.e(LOG_TAG, "Error when getting location information");
+                        addressLine);
             }
-
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error when getting location information");
+        }
         return null;
     }
 
     @Override
     public boolean onMyLocationButtonClick() {
+        Log.d(LOG_TAG, "On my location button has been clicked, getting and setting source address");
         if(getContext() instanceof MainMapActivity){
             Location mLastLocation = getPresentLocation();
             if(mLastLocation != null) {

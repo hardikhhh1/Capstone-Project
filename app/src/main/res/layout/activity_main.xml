@@ -6,23 +6,22 @@
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbar"
-        app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary">
+        app:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
     </android.support.v7.widget.Toolbar>
 
     <FrameLayout
         android:id="@+id/pickup_box_container"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
         android:layout_gravity="center_horizontal"
-        android:padding="10dp"
-        android:layout_below="@id/toolbar">
-        android:layout_below="@id/toolbar">
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <fragment
             android:id="@+id/pickup_fragment"
@@ -34,11 +33,11 @@
 
     <FrameLayout
         android:id="@+id/dropoff_box_container"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_below="@id/pickup_box_container"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
         android:padding="10dp">
 
         <fragment
@@ -50,16 +49,16 @@
     </FrameLayout>
     <FrameLayout
         android:id="@+id/layout_map_container"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/dropoff_box_container">
+        android:layout_below="@id/dropoff_box_container"
+        android:orientation="vertical">
     </FrameLayout>
     <Button
+        android:id="@+id/find_rides_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Find Rides"
-        android:id="@+id/find_rides_button"
         android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true"
+        android:text="Find Rides" />
 </RelativeLayout>

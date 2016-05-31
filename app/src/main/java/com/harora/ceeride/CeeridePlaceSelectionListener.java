@@ -15,8 +15,8 @@ public class CeeridePlaceSelectionListener implements PlaceSelectionListener{
 
     private final String LOG_TAG = CeeridePlaceSelectionListener.class.getSimpleName();
 
-    int index;
-    CeeRideMapActivity activity;
+    private int index;
+    private CeeRideMapActivity activity;
 
     public CeeridePlaceSelectionListener(CeeRideMapActivity activity, int index){
         this.index = index;

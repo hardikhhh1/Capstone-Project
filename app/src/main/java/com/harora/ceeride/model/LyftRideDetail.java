@@ -11,7 +11,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.harora.ceeride.utils.LyftRideUtil;
+import com.harora.ceeride.utils.CeeridePreferences;
 
 import java.util.List;
 
@@ -20,27 +20,7 @@ import java.util.List;
  */
 public class LyftRideDetail extends RideDetail{
 
-    private String currencyCode;
-    private final String TAG = LyftRideDetail.class.getSimpleName();
-
-    private static final String LYFT_PACKAGE = "me.lyft.android";
-
-    public LyftRideDetail(String rideId, String rideName, String rideCost,
-                          String lowRideCost, String highRideCost,
-                          Float surchargeValue,  String timeEstimate,
-                          Double pickUpLatitude, Double pickUpLongitude,
-                          Double destinationLatitude, Double destinationLongitude) {
-        // TODO : THe low ride cost and high ride cost can be null
-        // IN CASE OF TAXI
-        super(rideId, rideName, rideCost, lowRideCost, highRideCost, surchargeValue,
-                "USD", timeEstimate, pickUpLatitude, pickUpLongitude, destinationLatitude,
-                destinationLongitude);
-    }
-
-    public LyftRideDetail(Parcel in) {
-        super(in);
-    }
-
+    public static final String ZERO_STRING = "0";
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public RideDetail createFromParcel(Parcel in) {
             return new LyftRideDetail(in);
@@ -50,6 +30,32 @@ public class LyftRideDetail extends RideDetail{
             return new LyftRideDetail[size];
         }
     };
+    private static final String LYFT_PACKAGE = "me.lyft.android";
+    private final String TAG = LyftRideDetail.class.getSimpleName();
+    private String currencyCode;
+
+    private LyftRideDetail(String rideId, String rideName, String rideCost,
+                           String lowRideCost, String highRideCost,
+                           Float surchargeValue, String timeEstimate,
+                           Double pickUpLatitude, Double pickUpLongitude,
+                           Double destinationLatitude, Double destinationLongitude) {
+        // TODO : THe low ride cost and high ride cost can be null
+        // IN CASE OF TAXI
+        super(rideId, rideName, rideCost, lowRideCost, highRideCost, surchargeValue,
+                "USD", timeEstimate, pickUpLatitude, pickUpLongitude, destinationLatitude,
+                destinationLongitude);
+    }
+
+    private LyftRideDetail(Parcel in) {
+        super(in);
+    }
+
+    private static void openLink(Activity activity, String link) {
+        Intent playStoreIntent = new Intent(Intent.ACTION_VIEW);
+        playStoreIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        playStoreIntent.setData(Uri.parse(link));
+        activity.startActivity(playStoreIntent);
+    }
 
     @Override
     public String getHighRideCost() {
@@ -69,10 +75,10 @@ public class LyftRideDetail extends RideDetail{
     @Override
     public Drawable getAppIcon(Context context) throws PackageManager.NameNotFoundException {
         List<ApplicationInfo> applicationInfos =
-                context.getPackageManager().getInstalledApplications(PackageManager.GET_ACTIVITIES);
+                context.getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
         for(ApplicationInfo info : applicationInfos){
             if(info.taskAffinity == null) continue;
-            if(info.taskAffinity.toLowerCase().toString().toLowerCase().indexOf("lyft") != -1){
+            if (info.taskAffinity.toLowerCase().contains(CeeridePreferences.LYFT_RIDE.toLowerCase())) {
                 return context.getPackageManager().getApplicationIcon(info);
             }
         }
@@ -82,7 +88,7 @@ public class LyftRideDetail extends RideDetail{
     @Override
     public String getRideCostString() {
 
-        if(getLowRideCost().equals("0") && getHighRideCost().equals("0")){
+        if (getLowRideCost().equals(ZERO_STRING) && getHighRideCost().equals(ZERO_STRING)) {
             return "Metered";
         }
 
@@ -106,27 +112,14 @@ public class LyftRideDetail extends RideDetail{
         }
     }
 
-
     private  String getDeepLink(){
-        StringBuilder builder = new StringBuilder();
-        builder.append("lyft://");
-        builder.append("?ridetype=" + getRideName());
-        builder.append("&");
-        builder.append("pickup[latitude]=" + Double.toString(getPickUpLatitude()));
-        builder.append("&");
-        builder.append("pickup[longitude]=" +  Double.toString(getPickUpLongitude()));
-        builder.append("&");
-        builder.append("destination[latitude]=" +  Double.toString(getDestinationLatitude()));
-        builder.append("&");
-        builder.append("destination[longitude]=" +  Double.toString(getDestinationLongitude()));
-        return builder.toString();
-    }
-
-    static void openLink(Activity activity, String link) {
-        Intent playStoreIntent = new Intent(Intent.ACTION_VIEW);
-        playStoreIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        playStoreIntent.setData(Uri.parse(link));
-        activity.startActivity(playStoreIntent);
+        String builder = "lyft://?ridetype=" +
+                getRideName() +
+                "&pickup[latitude]=" + Double.toString(getPickUpLatitude()) +
+                "&pickup[longitude]=" + Double.toString(getPickUpLongitude()) +
+                "&destination[latitude]=" + Double.toString(getDestinationLatitude()) +
+                "&destination[longitude]=" + Double.toString(getDestinationLongitude());
+        return builder;
     }
 
 

@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.os.AsyncTask;
 
 import com.harora.ceeride.model.RideDetail;
+import com.harora.ceeride.service.CeerideReceiver;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Created by harora on 3/14/16.
@@ -15,7 +15,7 @@ public abstract class AbstractRideUtil extends AsyncTask<Void, Void, Object> imp
 
     Callback callback;
 
-    public AbstractRideUtil() {
+    AbstractRideUtil() {
     }
 
     public AbstractRideUtil(Activity activity) {
@@ -26,11 +26,11 @@ public abstract class AbstractRideUtil extends AsyncTask<Void, Void, Object> imp
 
     @Override
     public ArrayList<RideDetail> getRideDetails() {
-        throw new RuntimeException("Implement get ride details : " + getClass().getSimpleName().toString());
+        throw new RuntimeException("Implement get ride details : " + getClass().getSimpleName());
     }
 
 
     public interface Callback{
-        public void onRideDetails(ArrayList<RideDetail> rideDetails);
+        void onRideDetails(ArrayList<RideDetail> rideDetails, CeerideReceiver.RideType rideType);
     }
 }
