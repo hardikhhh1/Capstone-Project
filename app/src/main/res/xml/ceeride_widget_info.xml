@@ -1,0 +1,7 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialLayout="@layout/ceeride_widget"
+    android:minHeight="60dp"
+    android:minWidth="240dp"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="30000"
+    android:widgetCategory="home_screen|keyguard"></appwidget-provider>
