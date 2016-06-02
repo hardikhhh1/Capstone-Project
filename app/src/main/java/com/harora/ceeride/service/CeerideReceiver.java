@@ -1,8 +1,6 @@
 package com.harora.ceeride.service;
 
-import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
@@ -45,17 +43,13 @@ public class CeerideReceiver extends BroadcastReceiver {
     private void updateWidgets(Context context, ArrayList<RideDetail> rideDetails) {
 
         // Update the widget:
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context.getApplicationContext());
-        ComponentName ceerideWidget = new ComponentName(context.getApplicationContext(),
-                CeerideWidgetProvider.class);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(ceerideWidget);
 
         Intent intent = new Intent(context, CeerideWidgetProvider.class);
         intent.putParcelableArrayListExtra(CeerideRideService.RIDE_DETAILS_KEY, rideDetails);
-        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
-        // since it seems the onUpdate() is only fired on that:
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        intent.setAction(CeerideWidgetProvider.RIDE_DETAILS_UPDATED);
+//         Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+//         since it seems the onUpdate() is only fired on that:
+//        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
         context.sendBroadcast(intent);
     }
 

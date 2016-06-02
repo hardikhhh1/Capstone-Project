@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.harora.ceeride.service.CeerideReceiver;
+
 /**
  * Created by harora on 3/22/16.
  */
@@ -123,7 +125,10 @@ public abstract class RideDetail implements Parcelable {
         this.rideId = rideId;
     }
 
-    public abstract void openApp(Activity activity) throws PackageManager.NameNotFoundException;
+    public abstract CeerideReceiver.RideType getRideServiceType();
+
+    public abstract void openApp(Activity activity, String pickUpLocation,
+                                 String dropOffLocation) throws PackageManager.NameNotFoundException;
 
     public abstract Drawable getAppIcon(Context context) throws PackageManager.NameNotFoundException;
 

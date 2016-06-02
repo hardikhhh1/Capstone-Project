@@ -16,9 +16,11 @@ import java.util.List;
 class CeerideRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
 
+    public static final String NO_SURCHARGE = "No surcharge";
     private Context context;
 
     private List<RideDetail> rideDetails;
+
 
     public CeerideRemoteViewsFactory(Context context) {
         this.context = context;
@@ -58,18 +60,24 @@ class CeerideRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory
     @Override
     public RemoteViews getViewAt(int position) {
         RemoteViews row = new RemoteViews(context.getPackageName(),
-                R.layout.fragment_ridedetail);
+                R.layout.widget_ride_detail);
+
         row = updateView(row, rideDetails.get(position));
         return row;
     }
 
     private RemoteViews updateView(RemoteViews row, RideDetail rideDetail) {
         Float surchargeValue = rideDetail.getSurchargeValue();
-        row.setTextViewText(R.id.ride_name, "Uber");
+        String surcharge = Float.toString(surchargeValue);
+        row.setTextViewText(R.id.ride_name, rideDetail.getRideServiceType().toString());
+
         if (surchargeValue > 1.0) {
             row.setViewVisibility(R.id.surcharge_icon, View.VISIBLE);
-            row.setTextViewText(R.id.surcharge_value, Float.toString(surchargeValue));
+            row.setTextViewText(R.id.surcharge_value, surcharge);
+        } else {
+            row.setTextViewText(R.id.surcharge_value, NO_SURCHARGE);
         }
+
         return row;
     }
 

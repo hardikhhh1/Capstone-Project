@@ -1,11 +1,11 @@
 Ceeride:
     [] - For now show the surcharge information, and arrival time information.
 
-[] - If Admob is used, the app displays test ads. If Admob was not used, student meets specifications.
-[] - App builds and deploys using the installRelease Gradle task.
 [] - App is equipped with a signing configuration, and the keystore and passwords are included in the repository.
      Keystore is referred to by a relative path.
 
+
+- if On present is pressed after destination, show find rides
 
 
 
@@ -103,3 +103,5 @@ DONE:
 [] - Least favourites should be removed automatically.
 [] - App uses standard and simple transitions between activities.
 [] - App keeps all strings in a strings.xml file and enables RTL layout switching on all layouts.
+LATER:
+[] - If Admob is used, the app displays test ads. If Admob was not used, student meets specifications.

@@ -11,6 +11,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.harora.ceeride.service.CeerideReceiver;
 import com.harora.ceeride.utils.CeeridePreferences;
 
 import java.util.List;
@@ -30,15 +31,16 @@ public class LyftRideDetail extends RideDetail{
             return new LyftRideDetail[size];
         }
     };
+    public static final String METERED = "Metered";
     private static final String LYFT_PACKAGE = "me.lyft.android";
     private final String TAG = LyftRideDetail.class.getSimpleName();
     private String currencyCode;
 
-    private LyftRideDetail(String rideId, String rideName, String rideCost,
-                           String lowRideCost, String highRideCost,
-                           Float surchargeValue, String timeEstimate,
-                           Double pickUpLatitude, Double pickUpLongitude,
-                           Double destinationLatitude, Double destinationLongitude) {
+    public LyftRideDetail(String rideId, String rideName, String rideCost,
+                          String lowRideCost, String highRideCost,
+                          Float surchargeValue, String timeEstimate,
+                          Double pickUpLatitude, Double pickUpLongitude,
+                          Double destinationLatitude, Double destinationLongitude) {
         // TODO : THe low ride cost and high ride cost can be null
         // IN CASE OF TAXI
         super(rideId, rideName, rideCost, lowRideCost, highRideCost, surchargeValue,
@@ -60,6 +62,11 @@ public class LyftRideDetail extends RideDetail{
     @Override
     public String getHighRideCost() {
         return String.valueOf(Double.valueOf(super.getHighRideCost()) / 100);
+    }
+
+    @Override
+    public CeerideReceiver.RideType getRideServiceType() {
+        return CeerideReceiver.RideType.LYFT;
     }
 
     @Override
@@ -89,7 +96,7 @@ public class LyftRideDetail extends RideDetail{
     public String getRideCostString() {
 
         if (getLowRideCost().equals(ZERO_STRING) && getHighRideCost().equals(ZERO_STRING)) {
-            return "Metered";
+            return METERED;
         }
 
         String symbol = "";
@@ -101,7 +108,8 @@ public class LyftRideDetail extends RideDetail{
     }
 
     @Override
-    public void openApp(Activity activity) throws PackageManager.NameNotFoundException {
+    public void openApp(Activity activity, String pickUpLocation, String dropOffLocation)
+            throws PackageManager.NameNotFoundException {
         if (isPackageInstalled(activity, LYFT_PACKAGE)) {
             //This intent will help you to launch if the package is already installed
             openLink(activity, getDeepLink());
@@ -113,12 +121,13 @@ public class LyftRideDetail extends RideDetail{
     }
 
     private  String getDeepLink(){
-        String builder = "lyft://?ridetype=" +
+        String builder = "lyft://ridetype?id=" +
                 getRideName() +
                 "&pickup[latitude]=" + Double.toString(getPickUpLatitude()) +
                 "&pickup[longitude]=" + Double.toString(getPickUpLongitude()) +
                 "&destination[latitude]=" + Double.toString(getDestinationLatitude()) +
                 "&destination[longitude]=" + Double.toString(getDestinationLongitude());
+        builder.replace(" ", "%20");
         return builder;
     }
 

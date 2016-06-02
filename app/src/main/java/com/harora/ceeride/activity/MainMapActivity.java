@@ -84,6 +84,7 @@ public class MainMapActivity extends AppCompatActivity implements
                     .commit();
         }
 
+
     }
 
     @Override
@@ -294,7 +295,7 @@ public class MainMapActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListFragmentInteraction(RideDetail rideDetail) {
+    public void onListFragmentInteraction(final RideDetail rideDetail) {
         Log.d(LOG_TAG, "Interaction with the content: Ride clicked : " + rideDetail.getRideName());
 
         String messageBuilder = "Do you want to call " +
@@ -313,9 +314,17 @@ public class MainMapActivity extends AppCompatActivity implements
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int whichButton) {
+
                         Toast.makeText(MainMapActivity.this,
                                 R.string.confirmation_toast_text,
                                 Toast.LENGTH_SHORT).show();
+                        try {
+                            rideDetail.openApp(MainMapActivity.this,
+                                    pickUpPlace.getPlaceName(),
+                                    dropOffPlace.getPlaceName());
+                        } catch (PackageManager.NameNotFoundException e) {
+                            e.printStackTrace();
+                        }
                     }})
                 .setNegativeButton(android.R.string.no, null).show();
 
@@ -391,6 +400,8 @@ public class MainMapActivity extends AppCompatActivity implements
         }
 
         private void openDetailsFragment(){
+//            UberRideDetail.tempOpenApp(MainMapActivity.this);
+//            return;
             rideDetailFragment =
                     new RideDetailFragment();
             rideDetailFragment.setArguments(mBundle);

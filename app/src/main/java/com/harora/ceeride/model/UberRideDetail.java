@@ -11,6 +11,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.harora.ceeride.service.CeerideReceiver;
+
 import java.util.List;
 
 /**
@@ -57,6 +59,11 @@ public class UberRideDetail extends RideDetail{
     }
 
     @Override
+    public CeerideReceiver.RideType getRideServiceType() {
+        return CeerideReceiver.RideType.UBER;
+    }
+
+    @Override
     public Drawable getAppIcon(Context context) throws PackageManager.NameNotFoundException {
         List<ApplicationInfo> applicationInfos =
                 context.getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
@@ -71,10 +78,11 @@ public class UberRideDetail extends RideDetail{
     }
 
     @Override
-    public void openApp(Activity activity) throws PackageManager.NameNotFoundException {
+    public void openApp(Activity activity, String pickUpLocation,
+                        String dropOffLocation) throws PackageManager.NameNotFoundException {
         if (isPackageInstalled(activity, UBER_PACKAGE)) {
             //This intent will help you to launch if the package is already installed
-            openLink(activity, getDeepLink());
+            openLink(activity, getDeepLink(pickUpLocation, dropOffLocation));
             Log.d(TAG, "Uber is installed on the phone, opening the app. ");
         } else {
             openLink(activity, "https://play.google.com/store/apps/details?id=" + UBER_PACKAGE);
@@ -82,20 +90,44 @@ public class UberRideDetail extends RideDetail{
         }
     }
 
-    private  String getDeepLink(){
+//    public static void tempOpenApp(Activity activity){
+//        if (isPackageInstalled(activity, UBER_PACKAGE)) {
+//            //This intent will help you to launch if the package is already installed
+//            String deepLink =
+//                    "uber://?client_id=ssjRHM-uc_GgGEo_i-uQPv_Eehord70xeaUYBMwF&product_id" +
+//                            "=55c66225-fbe7-4fd5-9072-eab1ece5e23e&pickup[latitude]=42.331254300000005&pickup[longitude]" +
+//                            "=-71.11877369999999&dropoff[latitude]=42.3642347&dropoff[longitude]=-71.0891";
+//
+//            openLink(activity,
+//                   deepLink );
+//            Log.d(TAG, "Uber is installed on the phone, opening the app. ");
+//        } else {
+//            openLink(activity, "https://play.google.com/store/apps/details?id=" + UBER_PACKAGE);
+//            Log.d(TAG, "Uber is not currently installed on your phone, opening Play Store.");
+//        }
+//    }
 
-//        uber://dropoff[latitude]=37.802374&dropoff[longitude]=-122.405818&dropoff[nickname]=Coit%20Tower&dropoff[formatted_address]=1%20Telegraph%20Hill%20Blvd%2C%20San%20Francisco%2C%20CA%2094133&product_id=a1111c8c-c720-46c3-8534-2fcdd730040d&link_text=View%20team%20roster&partner_deeplink=partner%3A%2F%2Fteam%2F9383
-        String builder = "uber://action=setPickup" +
-                "?product_id[nickname]=" +
-                getRideId() +
-                "&pickup[latitude]=" +
-                Double.toString(getPickUpLatitude()) +
-                "&pickup[longitude]=" +
-                Double.toString(getPickUpLongitude()) +
-                "&dropoff[latitude]=" +
-                Double.toString(getDestinationLatitude()) +
-                "&dropoff[longitude]=" +
-                Double.toString(getDestinationLongitude());
+
+    private String getDeepLink(String pickUpLocation, String dropOffLocation) {
+        String builder =
+
+                "uber://?" +
+                        "action=setPickup" +
+                        "&pickup[latitude]=" +
+                        getPickUpLatitude() +
+                        "&pickup[longitude]=" +
+                        getPickUpLongitude() +
+//                            "&pickup[nickname]=UberHQ" +
+                        "&pickup[formatted_address]=" + pickUpLocation +
+                        "&dropoff[latitude]=" +
+                        getDestinationLatitude() +
+                        "&dropoff[longitude]=" +
+                        getDestinationLongitude() +
+//                        "&dropoff[nickname]=Coit%20Tower" +
+                        "&dropoff[formatted_address]=" + dropOffLocation +
+                        "&product_id=" +
+                        getRideId();
+        builder.replace(" ", "%20");
         return builder;
     }
 
