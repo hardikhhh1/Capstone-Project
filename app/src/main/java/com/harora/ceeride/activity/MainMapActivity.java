@@ -225,14 +225,14 @@ public class MainMapActivity extends AppCompatActivity implements
     public void onSourceChanged(CeeridePlace place) {
         Log.d(LOG_TAG, "Source location has been changed");
         pickUpPlace = place;
-        holder.pickUpLocation.setText(place.getPlaceName());
+        holder.setPickUpLocationText();
     }
 
     @Override
     public void onDestinationChanged(CeeridePlace place) {
         Log.d(LOG_TAG, "Destination location has been changed");
         dropOffPlace = place;
-        holder.destinationLocation.setText(place.getPlaceName());
+        holder.setDestinationLocationText();
     }
 
     /**
@@ -328,7 +328,6 @@ public class MainMapActivity extends AppCompatActivity implements
                     }})
                 .setNegativeButton(android.R.string.no, null).show();
 
-        // TODO : Open the appropriate application with the ride details.
     }
 
     /**
@@ -364,6 +363,20 @@ public class MainMapActivity extends AppCompatActivity implements
 
             // In the start the button should be invisible.
             mFindRidesButton.setVisibility(View.INVISIBLE);
+        }
+
+        public void setPickUpLocationText(){
+            pickUpLocation.setText(pickUpPlace.getPlaceName());
+            if(pickUpPlace != null && dropOffPlace != null){
+                mFindRidesButton.setVisibility(View.VISIBLE);
+            }
+        }
+
+        public void setDestinationLocationText(){
+            destinationLocation.setText(dropOffPlace.getPlaceName());
+            if(pickUpPlace != null && dropOffPlace != null){
+                mFindRidesButton.setVisibility(View.VISIBLE);
+            }
         }
 
 

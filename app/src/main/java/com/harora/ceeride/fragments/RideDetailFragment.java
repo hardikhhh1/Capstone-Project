@@ -1,5 +1,6 @@
 package com.harora.ceeride.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -55,6 +56,8 @@ public class RideDetailFragment extends Fragment implements CeerideReceiver.Call
 
     private Set<CeerideReceiver.RideType> rideTypes;
 
+    private ProgressDialog dialog ;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -69,6 +72,10 @@ public class RideDetailFragment extends Fragment implements CeerideReceiver.Call
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dialog = ProgressDialog.show(this.getContext(),
+                getString(R.string.progress_dialog_title),
+                getString(R.string.progress_dialog_message),
+                true);
 
         if (getArguments() != null) {
             pickUpLocation = (CeeridePlace) getArguments().get(PICK_UP_LOCATION);
@@ -76,9 +83,9 @@ public class RideDetailFragment extends Fragment implements CeerideReceiver.Call
         }
 
         if(pickUpLocation == null){
-            showExceptionMessage("Please select pick up location");
+            showExceptionMessage(getString(R.string.empty_pick_up_error_msg));
         } else if(dropOffLocation == null){
-            showExceptionMessage("Please select drop off location");
+            showExceptionMessage(getString(R.string.empty_destination_error_msg));
         }
 
         if (receiver == null) {
@@ -118,7 +125,7 @@ public class RideDetailFragment extends Fragment implements CeerideReceiver.Call
             recyclerView.addItemDecoration(new DividerItemDecoration(divider));
             new CeerideRideUtil(this, pickUpLocation, dropOffLocation).getRideDetails();
         }
-
+        dialog.show();
         return view;
     }
 
@@ -130,7 +137,7 @@ public class RideDetailFragment extends Fragment implements CeerideReceiver.Call
         Parcelable[] details = Arrays.copyOf(rideDetails.toArray(), rideDetails.size(),
                 Parcelable[].class);
         outState.putParcelableArray(CeerideRideService.RIDE_DETAILS_KEY, details);
-        outState.putSerializable("rideTypes", rideTypes.toArray());
+        outState.putSerializable(RIDE_TYPES, rideTypes.toArray());
     }
 
     @Override
@@ -146,7 +153,6 @@ public class RideDetailFragment extends Fragment implements CeerideReceiver.Call
             rideTypes.add((CeerideReceiver.RideType) o);
         }
 
-
         if (details == null) return;
         if (details.length == 0) return;
 
@@ -159,6 +165,7 @@ public class RideDetailFragment extends Fragment implements CeerideReceiver.Call
 
     @Override
     public void onRideDetails(List<RideDetail> rideDetails, CeerideReceiver.RideType rideType) {
+
         if (rideTypes.contains(rideType)) return;
 
         if (this.rideDetails == null) {
@@ -172,6 +179,9 @@ public class RideDetailFragment extends Fragment implements CeerideReceiver.Call
         // TODO : ADd the object and notify data changed from last item only
         // as its much faster.
         setAdapter();
+        if(dialog.isShowing()){
+            dialog.dismiss();
+        }
     }
 
 

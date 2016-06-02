@@ -6,4 +6,8 @@
     <string name="null_pick_up_location_text">Please fill the pick up address.</string>
     <string name="null_drop_off_location_text">Please fill the drop off location.</string>
     <string name="cannot_add_fav_text">Cannot add to favorites.</string>
+    <string name="progress_dialog_title">Please wait...</string>
+    <string name="progress_dialog_message">Getting you ride details.</string>
+    <string name="empty_pick_up_error_msg">Please select pick up location</string>
+    <string name="empty_destination_error_msg">Please select destination location</string>
 </resources>
