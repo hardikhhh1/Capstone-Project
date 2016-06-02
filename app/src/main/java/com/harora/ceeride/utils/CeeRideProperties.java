@@ -5,8 +5,8 @@ package com.harora.ceeride.utils;
  */
 public class CeeRideProperties {
 
-    public static final String UBER_CLIENT_ID = "ssjRHM-uc_GgGEo_i-uQPv_Eehord70xeaUYBMwF";
-    public static final String LYFT_CLIENT_ID = "m5ASmQsgURu7";
-    public static final String LYFT_CLIENT_SECRET = "ivJbJ9DSvRQ2X8kDKIZdazUbNW1Pd0e7";
+    public static final String UBER_CLIENT_ID = "ADD UBER CLIENT ID HERE";
+    public static final String LYFT_CLIENT_ID = "ADD LYFT CLIENT ID HERE";
+    public static final String LYFT_CLIENT_SECRET = "ADD LYFT CLIENT SECRET HERE";
 
 }
