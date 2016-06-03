@@ -12,12 +12,20 @@
         <item name="android:colorAccent">@color/accent</item>
 
         <item name="android:colorButtonNormal">@color/primary_dark</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:actionBarStyle">@style/CeerideActionBar</item>
+
     </style>
 
     <style name="PreferenceTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="android:background">@android:color/white</item>
     </style>
+
+    <style name="CeerideActionBar" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:background">@color/primary</item>
+    </style>
+
 
 
 </resources>

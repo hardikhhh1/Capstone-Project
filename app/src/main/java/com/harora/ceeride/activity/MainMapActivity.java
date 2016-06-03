@@ -66,7 +66,6 @@ public class MainMapActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
         MapsFragment mapsFragment = new MapsFragment();
@@ -373,7 +372,7 @@ public class MainMapActivity extends AppCompatActivity implements
         }
 
         public void setDestinationLocationText(){
-            destinationLocation.setText(dropOffPlace.getPlaceName());
+            pickUpLocation.setText(dropOffPlace.getPlaceName());
             if(pickUpPlace != null && dropOffPlace != null){
                 mFindRidesButton.setVisibility(View.VISIBLE);
             }

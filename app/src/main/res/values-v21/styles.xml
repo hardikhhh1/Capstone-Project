@@ -9,6 +9,7 @@
         <item name="toolbarStyle">@style/Theme.MyTheme.Toolbar</item>
         <item name="dialogTheme">@style/Theme.MyTheme.Dialog</item>
         <item name="alertDialogTheme">@style/Theme.MyTheme.Dialog.Alert</item>
+        <item name="android:windowBackground">@android:color/black</item>
     </style>
 
     <style name="Theme.MyTheme.DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
@@ -22,7 +23,7 @@
         <item name="color">@android:color/white</item>
         <item name="titleTextAppearance">@style/Theme.MyTheme.Toolbar.TextAppearance</item>
         <item name="subtitleTextAppearance">@style/Theme.MyTheme.Toolbar.TextAppearance.Subtitle
-        </item>
+    </item>
 
     </style>
 
@@ -43,4 +44,6 @@
         <item name="colorAccent">@color/accent</item>
         <item name="android:colorAccent">@color/accent</item>
     </style>
+
+
 </resources>
